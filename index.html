@@ -47,15 +47,49 @@ const MODULES=[['overview','🏠 Overview'],['growth','📈 Growth'],['tinman','
 const state={module:'overview',selected:'',g:'',profileTab:'summary',data:{settings:[],members:[],eventSetup:[],growth:[],growthAnalysis:[],tinman:[],darkOmens:[],trials:[],ragnarok:[],vaults:[],playerStatusHistory:[]},charts:{},player:''};
 const $=id=>document.getElementById(id);const clean=s=>(s??'').toString().trim();const key=s=>clean(s).toUpperCase().replace(/\s+/g,'');const num=v=>{let n=parseFloat(clean(v).replace(/,/g,''));return isNaN(n)?0:n};const fmt=n=>Number(n||0).toLocaleString();const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0%';
 function parseCSV(text){const rows=[];let row=[],cur='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cur+='"';i++}else if(c==='"'){q=!q}else if(c===','&&!q){row.push(cur);cur=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);row=[];cur=''}else cur+=c}row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);if(!rows.length)return[];const h=rows.shift().map(clean);return rows.map(r=>Object.fromEntries(h.map((x,i)=>[x,clean(r[i])]))) }
+function sheetMeta(url){
+ const gid=(url.match(/[?&]gid=(\d+)/)||[])[1]||'0';
+ const pub=(url.match(/\/d\/e\/([^/]+)\//)||[])[1];
+ return {pub,gid};
+}
+function gvizCell(c){
+ if(!c)return '';
+ if(c.f!==undefined&&c.f!==null)return clean(c.f);
+ if(c.v!==undefined&&c.v!==null)return clean(c.v);
+ return '';
+}
+function loadGviz(name,url){
+ return new Promise(resolve=>{
+  const m=sheetMeta(url); if(!m.pub)return resolve([]);
+  const cb='__woa_gviz_'+name.replace(/\W/g,'_')+'_'+Date.now();
+  let done=false,script=null;
+  const finish=(rows)=>{if(done)return;done=true;try{delete window[cb]}catch(e){};if(script&&script.parentNode)script.parentNode.removeChild(script);resolve(rows||[])};
+  window[cb]=(resp)=>{
+   try{
+    const cols=(resp.table.cols||[]).map((c,i)=>clean(c.label||c.id||('Column '+(i+1))));
+    const rows=(resp.table.rows||[]).map(r=>Object.fromEntries(cols.map((h,i)=>[h,gvizCell((r.c||[])[i])])))
+      .filter(row=>Object.values(row).some(v=>clean(v)!==''));
+    finish(rows);
+   }catch(e){console.warn('GViz parse failed',name,e);finish([])}
+  };
+  script=document.createElement('script');
+  script.onerror=()=>{console.warn('GViz load failed',name);finish([])};
+  script.src=`https://docs.google.com/spreadsheets/d/e/${m.pub}/gviz/tq?gid=${m.gid}&headers=1&tqx=out:json;responseHandler:${cb}`;
+  document.body.appendChild(script);
+  setTimeout(()=>finish([]),15000);
+ });
+}
 async function loadCSV(name,url){
  try{
   const ctrl=new AbortController();
-  const t=setTimeout(()=>ctrl.abort(),12000);
+  const t=setTimeout(()=>ctrl.abort(),9000);
   const res=await fetch(url,{cache:'no-store',signal:ctrl.signal});
   clearTimeout(t);
-  if(!res.ok)throw new Error(res.status);
-  return parseCSV(await res.text());
- }catch(e){console.warn('CSV failed',name,e);return []}
+  if(res.ok){const rows=parseCSV(await res.text());if(rows.length)return rows;}
+ }catch(e){console.warn('CSV fetch blocked/failed, trying GViz',name,e)}
+ const rows=await loadGviz(name,url);
+ if(!rows.length)console.warn('No rows loaded for',name);
+ return rows;
 }
 async function init(){
  renderShell();
