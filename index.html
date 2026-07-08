@@ -35,7 +35,8 @@ const CONFIG={
  ragnarok:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=620947888&single=true&output=csv',
  chestpoints:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=1886099941&single=true&output=csv',
  vaults:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=180487174&single=true&output=csv',
- playerStatusHistory:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=465755854&single=true&output=csv'
+ playerStatusHistory:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=465755854&single=true&output=csv',
+eventExemptions:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=532527285&single=true&output=csv', 
 };
 const LIVE_STATUS={};
 function parseCSVMatrix(text){const rows=[];let row=[],cur='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cur+='"';i++}else if(c==='"'){q=!q}else if(c===','&&!q){row.push(cur);cur=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);row=[];cur=''}else cur+=c}row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);return rows}
