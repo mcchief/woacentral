@@ -24,18 +24,18 @@ label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-trans
 <div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><div><h2 class="modal-title" id="modalTitle">Player Profile</h2><p class="sub" id="modalSub">Player performance across all recorded events.</p></div><button class="close" id="closeModal">×</button></div><div class="modal-body"><div class="profile-grid" id="profileGrid"></div><div class="profile-tabs" id="profileTabs"></div><div id="profileContent"></div></div></div></div>
 <script>
 const CONFIG={
- settings:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=16913949&single=true&output=csv',
- members:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=850307064&single=true&output=csv',
- eventSetup:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=1218142032&single=true&output=csv',
- growth:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=515375380&single=true&output=csv',
- growthAnalysis:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=1539148859&single=true&output=csv',
- tinman:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=924594297&single=true&output=csv',
- darkOmens:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=470842383&single=true&output=csv',
- trials:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=1544629531&single=true&output=csv',
- ragnarok:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=620947888&single=true&output=csv',
- chestpoints:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=1886099941&single=true&output=csv',
- vaults:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=180487174&single=true&output=csv',
- playerStatusHistory:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsTT-_taEOpb6BlCTIwtt3A6euAlen5nxGRQEHsEcptqt_bW2jwdqUo5ytQDy9ig/pub?gid=465755854&single=true&output=csv'
+ settings:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=16913949&single=true&output=csv',
+ members:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=850307064&single=true&output=csv',
+ eventSetup:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=1218142032&single=true&output=csv',
+ growthrawdata:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=515375380&single=true&output=csv',
+ growthAnalysis:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=1539148859&single=true&output=csv',
+ tinman:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=924594297&single=true&output=csv',
+ darkOmens:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=470842383&single=true&output=csv',
+ trials:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=1544629531&single=true&output=csv',
+ ragnarok:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=620947888&single=true&output=csv',
+ chestpoints:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=1886099941&single=true&output=csv',
+ vaults:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=180487174&single=true&output=csv',
+ playerStatusHistory:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIhT37W7piZ5vVGvB9IuXY9OqB4pxwLIV15sZ8r9yNZBW0iTlU85yQHvEjMLOUGMjmg_4_OuMzALpT/pub?gid=465755854&single=true&output=csv'
 };
 const LIVE_STATUS={};
 function parseCSVMatrix(text){const rows=[];let row=[],cur='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cur+='"';i++}else if(c==='"'){q=!q}else if(c===','&&!q){row.push(cur);cur=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);row=[];cur=''}else cur+=c}row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);return rows}
