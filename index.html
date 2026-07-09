@@ -130,13 +130,39 @@ function eligibleMembersForDate(eventDate){if(!eventDate)return activeRosterMemb
 function updateHealthWarnings(){const failed=Object.entries(LIVE_STATUS).filter(([k,v])=>v&&v.status!=='Loaded');const el=$('warningBanner');if(!el)return;if(!failed.length){el.classList.remove('show');el.innerHTML='';return}el.classList.add('show');el.innerHTML='⚠ Some live Google Sheets did not return usable data: '+failed.map(([k])=>esc(k)).join(', ')+'. Other modules continue to work.'}
 
 function renderVaults(){
-const sourceRows=selectedRows(state.data.vaults||[]),eventId=state.selected||(sourceRows[0]?._eventId||''),meta=eventId?eventMeta(eventId):{},eventDate=eventDateFromSelection(sourceRows),eligibleMembers=filteredRows(eligibleMembersForDate(eventDate).map(m=>({...m,_g:m._g||memberG(m._name)}))),baseAvailable=state.g?eligibleMembers.length:(meta._available||sourceRows[0]?._available||eligibleMembers.length),exemptCount=exemptedMembers(eventId,eligibleMembers).length,eligible=eligibleCountAfterExempt(eventId,baseAvailable,eligibleMembers),validRows=sourceRows.filter(r=>memberIsActiveForDate(r._name,eventDate)&&!rowIsExempt(eventId,r));
+const sourceRows=selectedRows(state.data.vaults||[]),eventId=state.selected||(sourceRows[0]?._eventId||''),meta=eventId?eventMeta(eventId):{},eventDate=eventDateFromSelection(sourceRows),eligibleMembers=filteredRows(eligibleMembersForDate(eventDate).map(m=>({...m,_g:m._g||memberG(m._name)}))),baseAvailable=state.g?eligibleMembers.length:(meta._available||sourceRows[0]?._available||eligibleMembers.length),exemptCount=exemptedMembers(eventId,eligibleMembers).length,eligible=eligibleCountAfterExempt(eventId,baseAvailable,eligibleMembers);
+
+// Vault builder matching must use BOTH Player ID and Player Name.
+// Previous version only compared one key, so players who built could still appear as Non Vault Builders.
+const normVaultKey=v=>clean(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'');
+const vaultKeys=o=>[key(o?._id),key(o?._name),normVaultKey(o?._id),normVaultKey(o?._name)].filter(Boolean);
+const hasAnyKey=(set,o)=>vaultKeys(o).some(k=>set.has(k));
+const addKeys=(set,o)=>vaultKeys(o).forEach(k=>set.add(k));
+
+const validRows=sourceRows.filter(r=>r._name&&memberIsActiveForDate(r._name,eventDate)&&!rowIsExempt(eventId,r));
 const builderMap={};
-validRows.forEach(r=>{const kk=key(r._id||r._name);if(!kk)return;if(!builderMap[kk])builderMap[kk]=r;});
-const rows=Object.values(builderMap),built=rows.length,nonBuilders=Math.max(0,eligible-built),levels=rows.map(r=>r._vault).filter(Boolean),levelCounts=groupCount(rows,'_vault'),mostBuilt=Object.entries(levelCounts).sort((a,b)=>num(b[1])-num(a[1])||num(b[0])-num(a[0]))[0]?.[0]||0,enteredKeys=new Set(rows.map(r=>key(r._id||r._name)));
-const nonBuilderList=(eligibleMembers||[]).filter(m=>!isPlayerExempt(eventId,m)&&!enteredKeys.has(key(m._id||m._name))).slice(0,nonBuilders).map(m=>({_name:m._name,_g:m._g,_score:m._vault||0}));
-const currentEligibleKeys=new Set(activeRosterMembers().filter(m=>!isPlayerExempt(eventId,m)).map(m=>key(m._name))),vaultBuildMap={};
-(state.data.vaults||[]).forEach(r=>{if(!r._name||!currentEligibleKeys.has(key(r._name))||rowIsExempt(r._eventId,r))return;const kk=key(r._name);if(!vaultBuildMap[kk])vaultBuildMap[kk]={_name:r._name,_g:r._g||memberG(r._name),_score:0};vaultBuildMap[kk]._score++});
+const builtKeys=new Set();
+validRows.forEach(r=>{
+  const uniqueKey=normVaultKey(r._name)||key(r._name)||key(r._id);
+  if(!uniqueKey)return;
+  if(!builderMap[uniqueKey])builderMap[uniqueKey]=r;
+  addKeys(builtKeys,r);
+});
+
+const rows=Object.values(builderMap),built=rows.length,nonBuilders=Math.max(0,eligible-built),levels=rows.map(r=>r._vault).filter(Boolean),levelCounts=groupCount(rows,'_vault'),mostBuilt=Object.entries(levelCounts).sort((a,b)=>num(b[1])-num(a[1])||num(b[0])-num(a[0]))[0]?.[0]||0;
+
+let nonBuilderList=(eligibleMembers||[])
+  .filter(m=>!isPlayerExempt(eventId,m))
+  .filter(m=>!hasAnyKey(builtKeys,m))
+  .map(m=>({_name:m._name,_g:m._g,_score:m._vault||0}));
+
+// Keep KPI and visible list aligned. If 86 built from 100 eligible, show exactly 14 missing builders.
+nonBuilderList=nonBuilderList.slice(0,nonBuilders);
+
+const currentEligibleKeys=new Set();
+activeRosterMembers().filter(m=>!isPlayerExempt(eventId,m)).forEach(m=>vaultKeys(m).forEach(k=>currentEligibleKeys.add(k)));
+const vaultBuildMap={};
+(state.data.vaults||[]).forEach(r=>{if(!r._name||rowIsExempt(r._eventId,r))return;if(!vaultKeys(r).some(k=>currentEligibleKeys.has(k)))return;const kk=normVaultKey(r._name)||key(r._name);if(!vaultBuildMap[kk])vaultBuildMap[kk]={_name:r._name,_g:r._g||memberG(r._name),_score:0};vaultBuildMap[kk]._score++});
 const mostVaultsBuilt=Object.values(vaultBuildMap).sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name))).slice(0,10);
 $('app').innerHTML=`<section class="content-head glass"><h2>Vaults</h2><p class="sub">${EXEC_COPY.vaults}</p></section><section class="kpis">${kpiHtml([['Available Members',baseAvailable],['Exempted Players',exemptCount],['Eligible Builders',eligible],['Built Vaults',built],['Non Vault Builders',nonBuilders],['Completion %',pct(built,eligible)],['Most Common Vault Level',mostBuilt],['Highest Vault Level',Math.max(0,...levels)]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Vault Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Vault Build Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section><section class="vault-menu">${listCard('Non Vault Builders',nonBuilderList,'Missing Builders',EXEC_COPY.nonBuilders)}${listCard('Most Vaults Built',mostVaultsBuilt,'Vaults Built',EXEC_COPY.mostVaults)}</section>${tableCard('Vault History',rows,['Rank','Player','G-Level','Vault Level'],r=>[r._rank||'',pLink(r._name),esc(r._g||memberG(r._name)),fmt(r._vault)])}`;
 chartPie('c1',levelCounts);chartLine('c2',eventTrend((state.data.vaults||[]).filter(r=>!rowIsExempt(r._eventId,r))));
