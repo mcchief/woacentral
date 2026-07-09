@@ -130,41 +130,72 @@ function eligibleMembersForDate(eventDate){if(!eventDate)return activeRosterMemb
 function updateHealthWarnings(){const failed=Object.entries(LIVE_STATUS).filter(([k,v])=>v&&v.status!=='Loaded');const el=$('warningBanner');if(!el)return;if(!failed.length){el.classList.remove('show');el.innerHTML='';return}el.classList.add('show');el.innerHTML='⚠ Some live Google Sheets did not return usable data: '+failed.map(([k])=>esc(k)).join(', ')+'. Other modules continue to work.'}
 
 function renderVaults(){
-const sourceRows=selectedRows(state.data.vaults||[]),eventId=state.selected||(sourceRows[0]?._eventId||''),meta=eventId?eventMeta(eventId):{},eventDate=eventDateFromSelection(sourceRows),eligibleMembers=filteredRows(eligibleMembersForDate(eventDate).map(m=>({...m,_g:m._g||memberG(m._name)}))),baseAvailable=state.g?eligibleMembers.length:(meta._available||sourceRows[0]?._available||eligibleMembers.length),exemptCount=exemptedMembers(eventId,eligibleMembers).length,eligible=eligibleCountAfterExempt(eventId,baseAvailable,eligibleMembers);
+const sourceRows=selectedRows(state.data.vaults||[]),eventId=state.selected||(sourceRows[0]?._eventId||''),meta=eventId?eventMeta(eventId):{},eventDate=eventDateFromSelection(sourceRows);
 
-// Vault builder matching must use BOTH Player ID and Player Name.
-// Previous version only compared one key, so players who built could still appear as Non Vault Builders.
+// Production Vault Rule:
+// Non Vault Builders = Active Members - Built Vaults - Exemptions
+// Built/exempt matching is done by Player ID first and Player Name fallback.
 const normVaultKey=v=>clean(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'');
 const vaultKeys=o=>[key(o?._id),key(o?._name),normVaultKey(o?._id),normVaultKey(o?._name)].filter(Boolean);
-const hasAnyKey=(set,o)=>vaultKeys(o).some(k=>set.has(k));
 const addKeys=(set,o)=>vaultKeys(o).forEach(k=>set.add(k));
+const hasAnyKey=(set,o)=>vaultKeys(o).some(k=>set.has(k));
 
-const validRows=sourceRows.filter(r=>r._name&&memberIsActiveForDate(r._name,eventDate)&&!rowIsExempt(eventId,r));
+// 1) Active members only. If Event Setup has Available Members, use it as the official cap.
+let activePool=filteredRows(eligibleMembersForDate(eventDate).map(m=>({...m,_g:m._g||memberG(m._name)})));
+const eventAvailable=num(meta._available||sourceRows[0]?._available||0);
+const activeCount=eventAvailable||activePool.length;
+
+// 2) Exemptions are removed from the active pool.
+const exemptCount=exemptedMembers(eventId,activePool).length;
+const eligible=Math.max(0,activeCount-exemptCount);
+
+// 3) Built vaults are unique active, non-exempt builders for the selected event.
+const activeKeys=new Set();
+activePool.filter(m=>!isPlayerExempt(eventId,m)).forEach(m=>addKeys(activeKeys,m));
+const validRows=sourceRows.filter(r=>{
+  if(!r._name)return false;
+  if(rowIsExempt(eventId,r))return false;
+  if(!memberIsActiveForDate(r._name,eventDate))return false;
+  // If the builder exists in the active roster, accept it. If ID/name mismatch is unresolved, name/date active check still protects it.
+  return !activeKeys.size || hasAnyKey(activeKeys,r) || !!memberByName(r._name);
+});
 const builderMap={};
 const builtKeys=new Set();
 validRows.forEach(r=>{
-  const uniqueKey=normVaultKey(r._name)||key(r._name)||key(r._id);
+  const uniqueKey=normVaultKey(r._id)||normVaultKey(r._name)||key(r._id)||key(r._name);
   if(!uniqueKey)return;
   if(!builderMap[uniqueKey])builderMap[uniqueKey]=r;
   addKeys(builtKeys,r);
 });
+const rows=Object.values(builderMap);
+const built=Math.min(rows.length,eligible);
 
-const rows=Object.values(builderMap),built=rows.length,nonBuilders=Math.max(0,eligible-built),levels=rows.map(r=>r._vault).filter(Boolean),levelCounts=groupCount(rows,'_vault'),mostBuilt=Object.entries(levelCounts).sort((a,b)=>num(b[1])-num(a[1])||num(b[0])-num(a[0]))[0]?.[0]||0;
+// 4) Final formula: Active - Exemptions - Builders.
+const nonBuilders=Math.max(0,eligible-built);
 
-let nonBuilderList=(eligibleMembers||[])
+const levels=rows.map(r=>r._vault).filter(Boolean),levelCounts=groupCount(rows,'_vault'),mostBuilt=Object.entries(levelCounts).sort((a,b)=>num(b[1])-num(a[1])||num(b[0])-num(a[0]))[0]?.[0]||0;
+
+// 5) Missing list comes from the same formula source, so KPI and list stay aligned.
+let nonBuilderList=activePool
   .filter(m=>!isPlayerExempt(eventId,m))
   .filter(m=>!hasAnyKey(builtKeys,m))
   .map(m=>({_name:m._name,_g:m._g,_score:m._vault||0}));
-
-// Keep KPI and visible list aligned. If 86 built from 100 eligible, show exactly 14 missing builders.
 nonBuilderList=nonBuilderList.slice(0,nonBuilders);
 
+// 6) Most Vaults Built uses all recorded vaults, but excludes exempt/non-current records where possible.
 const currentEligibleKeys=new Set();
-activeRosterMembers().filter(m=>!isPlayerExempt(eventId,m)).forEach(m=>vaultKeys(m).forEach(k=>currentEligibleKeys.add(k)));
+activeRosterMembers().filter(m=>!isPlayerExempt(eventId,m)).forEach(m=>addKeys(currentEligibleKeys,m));
 const vaultBuildMap={};
-(state.data.vaults||[]).forEach(r=>{if(!r._name||rowIsExempt(r._eventId,r))return;if(!vaultKeys(r).some(k=>currentEligibleKeys.has(k)))return;const kk=normVaultKey(r._name)||key(r._name);if(!vaultBuildMap[kk])vaultBuildMap[kk]={_name:r._name,_g:r._g||memberG(r._name),_score:0};vaultBuildMap[kk]._score++});
+(state.data.vaults||[]).forEach(r=>{
+  if(!r._name||rowIsExempt(r._eventId,r))return;
+  if(currentEligibleKeys.size && !hasAnyKey(currentEligibleKeys,r) && !memberByName(r._name))return;
+  const kk=normVaultKey(r._id)||normVaultKey(r._name)||key(r._name);
+  if(!vaultBuildMap[kk])vaultBuildMap[kk]={_name:r._name,_g:r._g||memberG(r._name),_score:0};
+  vaultBuildMap[kk]._score++;
+});
 const mostVaultsBuilt=Object.values(vaultBuildMap).sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name))).slice(0,10);
-$('app').innerHTML=`<section class="content-head glass"><h2>Vaults</h2><p class="sub">${EXEC_COPY.vaults}</p></section><section class="kpis">${kpiHtml([['Available Members',baseAvailable],['Exempted Players',exemptCount],['Eligible Builders',eligible],['Built Vaults',built],['Non Vault Builders',nonBuilders],['Completion %',pct(built,eligible)],['Most Common Vault Level',mostBuilt],['Highest Vault Level',Math.max(0,...levels)]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Vault Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Vault Build Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section><section class="vault-menu">${listCard('Non Vault Builders',nonBuilderList,'Missing Builders',EXEC_COPY.nonBuilders)}${listCard('Most Vaults Built',mostVaultsBuilt,'Vaults Built',EXEC_COPY.mostVaults)}</section>${tableCard('Vault History',rows,['Rank','Player','G-Level','Vault Level'],r=>[r._rank||'',pLink(r._name),esc(r._g||memberG(r._name)),fmt(r._vault)])}`;
+
+$('app').innerHTML=`<section class="content-head glass"><h2>Vaults</h2><p class="sub">${EXEC_COPY.vaults}</p></section><section class="kpis">${kpiHtml([['Active Members',activeCount],['Exempted Players',exemptCount],['Eligible Builders',eligible],['Built Vaults',built],['Non Vault Builders',nonBuilders],['Completion %',pct(built,eligible)],['Most Common Vault Level',mostBuilt],['Highest Vault Level',Math.max(0,...levels)]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Vault Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Vault Build Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section><section class="vault-menu">${listCard('Non Vault Builders',nonBuilderList,'Missing Builders',EXEC_COPY.nonBuilders)}${listCard('Most Vaults Built',mostVaultsBuilt,'Vaults Built',EXEC_COPY.mostVaults)}</section>${tableCard('Vault History',rows,['Rank','Player','G-Level','Vault Level'],r=>[r._rank||'',pLink(r._name),esc(r._g||memberG(r._name)),fmt(r._vault)])}`;
 chartPie('c1',levelCounts);chartLine('c2',eventTrend((state.data.vaults||[]).filter(r=>!rowIsExempt(r._eventId,r))));
 }
 function renderDataHealth(){const rows=Object.entries(state.data).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>({_sheet:k,_count:v.length,_status:v.length?'Loaded':'Empty'}));$('app').innerHTML=`<section class="content-head glass"><h2>Data Health</h2><p class="sub">Live Google Sheets connection check. Each dataset loads independently.</p></section><section class="kpis">${kpiHtml([['Members',state.data.members.length],['Active',activeMembers().length],['Event Setup',state.data.eventSetup.length],['Growth Rows',state.data.growthRaw.length],['Event Rows',allEventRows().length],['Chest Points',state.data.chestpoints.length],['Vault Rows',state.data.vaults.length],['History Rows',state.data.playerStatusHistory.length],['Exemptions',state.data.eventExemptions.length]])}</section>${tableCard('Loaded Tables',rows,['Dataset','Rows','Status'],r=>[esc(r._sheet),fmt(r._count),statusBadge(r._status)])}`}
