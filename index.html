@@ -297,7 +297,7 @@ function playerTimeline(name){const kk=key(name), out=[]; const add=(r, event, s
  (state.data.tinman||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('tinman',r)).forEach(r=>add(r,'Tinman','Points'));
  (state.data.darkOmens||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('darkOmens',r)).forEach(r=>add(r,'Dark Omens','Essence'));
  (state.data.trials||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('trials',r)).forEach(r=>add(r,'Trials of Olympus','Score'));
- (state.data.ragnarok||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('ragnarok',r)).forEach(r=>add(r,'Ragnarök','Score'));
+ (state.data.ragnarok||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('ragnarok',r)).forEach(r=>out.push({_date:r._event,_event:'Ragnarök',_g:r._g||memberG(r._name),_target:0,_score:r._score,_status:'Participated',_type:'ragnarok',_label:'Score'}));
  (state.data.chestpoints||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('chestpoints',r)).forEach(r=>add(r,'Chest Points','Points'));
  (state.data.vaults||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('vaults',r)).forEach(r=>out.push({_date:r._event,_event:'Vault',_g:r._g||memberG(r._name),_vault:r._vault,_status:'Built',_type:'vault'}));
  return out.filter(x=>x._date).sort((a,b)=>String(b._date).localeCompare(String(a._date)))}
@@ -312,7 +312,7 @@ const EXEC_COPY={
  tinman:'Tinman participation, target achievement and player performance.',
  darkOmens:'Dark Omens participation, target achievement and essence performance.',
  trials:'Trials of Olympus participation, target achievement and player performance.',
- ragnarok:'Ragnarök participation, target achievement and battle performance.',
+ ragnarok:'Ragnarök participation, mandatory attendance and battle performance.',
  chestpoints:'Chest Points contribution, target achievement and participation.',
  vaults:'Vault participation, completion and builder compliance.',
  exemptions:'Player exemption coverage and status across all events.',
@@ -462,26 +462,140 @@ function renderEventModule(k,title,scoreLabel){
  chartPie('c3',{'Met Target':met,'Below Target':below});
  chartLine('c4',eventTrend((state.data[k]||[]).filter(r=>rowHasParticipation(k,r))))
 }
+
+function renderRagnarok(){
+ const k='ragnarok',title='Ragnarök',scoreLabel='Score',
+ sourceRows=selectedRows(state.data.ragnarok||[]).filter(r=>r._name),
+ eventId=state.selected||(sourceRows[0]?._eventId||''),
+ meta=eventId?eventMeta(eventId):{},
+ eventDate=eventDateFromSelection(sourceRows),
+ eligibleMembers=filteredRows(eligibleMembersForDate(eventDate).map(m=>({...m,_g:m._g||memberG(m._name)}))),
+ baseAvailable=state.g?eligibleMembers.length:(meta._available||sourceRows[0]?._available||eligibleMembers.length),
+ activeRows=sourceRows.filter(r=>memberIsActiveForDate(r._name,eventDate)),
+ participantRows=activeRows.filter(r=>rowHasParticipation(k,r)),
+ effectiveExemptions=effectiveExemptedMembers(eventId,eligibleMembers,activeRows,k,eventDate),
+ exemptButParticipated=participantRows.filter(r=>rowIsExempt(eventId,r,eventDate)),
+ eligible=eligibleCountAfterEffectiveExempt(eventId,baseAvailable,eligibleMembers,activeRows,k,eventDate),
+ participants=participantRows.length,
+ total=participantRows.reduce((s,r)=>s+r._score,0),
+ nonParticipants=outstandingEventEntries(eventId,activeRows,eligibleMembers,k,eventDate)
+   .map(m=>({_name:m._name,_id:m._id,_g:m._g||memberG(m._name),_score:0}))
+   .sort((a,b)=>String(a._name).localeCompare(String(b._name)));
+
+ const participationByG={};
+ eligibleMembers.forEach(m=>{
+  if(isPlayerExempt(eventId,m,eventDate)&&!participantRows.some(r=>samePlayer(m,r)))return;
+  const g=m._g||memberG(m._name)||'Unknown';
+  participationByG[g]=participationByG[g]||{eligible:0,participants:0};
+  participationByG[g].eligible++;
+  if(participantRows.some(r=>samePlayer(m,r)))participationByG[g].participants++;
+ });
+ const participationPctByG=Object.fromEntries(
+  Object.entries(participationByG).map(([g,v])=>[g,v.eligible?(v.participants/v.eligible)*100:0])
+ );
+
+ const resultRows=[...activeRows].sort((a,b)=>b._score-a._score||num(a._rank)-num(b._rank));
+ const resultsTable=tableCard(
+   'Player Results',
+   resultRows,
+   ['Rank','Player','G-Level',scoreLabel,'Participation'],
+   r=>[
+     r._rank||'',
+     pLink(r._name),
+     esc(r._g||memberG(r._name)),
+     fmt(r._score),
+     statusBadge(rowHasParticipation(k,r)?'Participated':'Missed')
+   ],
+   `${resultRows.length} Ragnarök player records for the selected event.`
+ );
+
+ $('app').innerHTML=`
+ <section class="content-head glass">
+   <h2>${title}</h2>
+   <p class="sub">${EXEC_COPY.ragnarok}</p>
+ </section>
+
+ <section class="kpis">${kpiHtml([
+   ['Available Members',baseAvailable],
+   ['Effective Exemptions',effectiveExemptions.length],
+   ['Exempt but Participated',exemptButParticipated.length],
+   ['Eligible Members',eligible],
+   ['Participants',participants],
+   ['Participation %',pct(participants,eligible)],
+   ['Total '+scoreLabel,short(total)],
+   ['Non-Participants',nonParticipants.length]
+ ])}</section>
+
+ <section class="chart-grid">
+   <div class="glass"><div class="panel-head"><h3>Top 10 ${scoreLabel}</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div>
+   <div class="glass"><div class="panel-head"><h3>G-Level Performance</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div>
+   <div class="glass"><div class="panel-head"><h3>Participation Compliance by G-Level</h3></div><div class="panel-body"><div class="chartbox" id="c3"></div></div></div>
+   <div class="glass"><div class="panel-head"><h3>Participation Trend</h3></div><div class="panel-body"><div class="chartbox" id="c4"></div></div></div>
+ </section>
+
+ ${resultsTable}
+
+ <section class="score-intel-grid">
+   <div class="dynamic-column">
+     ${listCard('Non-Participants',nonParticipants,'Mandatory','Eligible players with no recorded Ragnarök participation for the selected event.')}
+   </div>
+   <div class="dynamic-column">
+     ${listCard('Top Performers',[...participantRows].sort((a,b)=>b._score-a._score).slice(0,10),'Top','Highest Ragnarök scores in the selected event.')}
+     ${listCard('Consecutive Non-Participants',consecutiveUnder(k,eventId).slice(0,10),'3+ Consecutive','Players currently missing three or more consecutive eligible Ragnarök events.')}
+     ${listCard('Repeat Non-Participants',repeatUnder(k,eventId).slice(0,10),'Repeat Risk','Players missing two or more eligible Ragnarök events.')}
+   </div>
+ </section>`;
+
+ chartBar('c1',topObj(participantRows,'_name','_score',10));
+ chartBar('c2',groupSum(participantRows,'_g','_score'));
+ chartBarPercent('c3',participationPctByG,'Participation Compliance');
+ chartLine('c4',eventTrend((state.data.ragnarok||[]).filter(r=>rowHasParticipation('ragnarok',r))));
+}
+
 function repeatUnder(k,eventId=''){
  const map={};
  const selectedEventDate=parseAnyDate(eventMeta(eventId)._date)||null;
  const referenceDate=selectedEventDate||todayDate();
- (state.data[k]||[]).forEach(r=>{
-  if(!clean(r._name)||r._target<=0)return;
-  const rowEventId=clean(r._eventId)||clean(eventId);
-  const rowEventDate=parseAnyDate(eventMeta(rowEventId)._date)||parseAnyDate(r._event);
-  if(!rowEventDate)return;
-  if(referenceDate&&rowEventDate.getTime()>referenceDate.getTime())return;
-  const participated=rowHasParticipation(k,r);
-  if(!memberIsActiveForDate(r._name,rowEventDate))return;
-  if(!memberIsActiveForDate(r._name,referenceDate))return;
-  if(rowIsExempt(rowEventId,r,rowEventDate)&&!participated)return;
-  if(r._score<r._target){
-   const kk=key(r._name);
-   map[kk]=map[kk]||{_name:r._name,_g:r._g||memberG(r._name),_score:0};
-   map[kk]._score++;
-  }
- });
+ if(k==='ragnarok'){
+  const groups=new Map();
+  (state.data.ragnarok||[]).filter(r=>clean(r._name)).forEach(r=>{
+   const gid=clean(r._eventId)||clean(r._event)||'Unknown Event';
+   if(!groups.has(gid))groups.set(gid,[]);
+   groups.get(gid).push(r);
+  });
+  groups.forEach((groupRows,gid)=>{
+   const groupDate=parseAnyDate(eventMeta(gid)._date)||parseAnyDate(groupRows.find(r=>r._event)?._event);
+   if(!groupDate||groupDate>referenceDate)return;
+   (state.data.members||[]).forEach(member=>{
+    if(!memberIsActiveForDate(member._name,groupDate)||!memberIsActiveForDate(member._name,referenceDate))return;
+    const row=bestPlayerRow(groupRows,member,'ragnarok');
+    const participated=!!row&&rowHasParticipation('ragnarok',row);
+    if(isPlayerExempt(gid,member,groupDate)&&!participated)return;
+    if(!participated){
+     const kk=key(member._name);
+     map[kk]=map[kk]||{_name:member._name,_g:member._g||memberG(member._name),_score:0};
+     map[kk]._score++;
+    }
+   });
+  });
+ }else{
+  (state.data[k]||[]).forEach(r=>{
+   if(!clean(r._name)||r._target<=0)return;
+   const rowEventId=clean(r._eventId)||clean(eventId);
+   const rowEventDate=parseAnyDate(eventMeta(rowEventId)._date)||parseAnyDate(r._event);
+   if(!rowEventDate)return;
+   if(referenceDate&&rowEventDate.getTime()>referenceDate.getTime())return;
+   const participated=rowHasParticipation(k,r);
+   if(!memberIsActiveForDate(r._name,rowEventDate))return;
+   if(!memberIsActiveForDate(r._name,referenceDate))return;
+   if(rowIsExempt(rowEventId,r,rowEventDate)&&!participated)return;
+   if(r._score<r._target){
+    const kk=key(r._name);
+    map[kk]=map[kk]||{_name:r._name,_g:r._g||memberG(r._name),_score:0};
+    map[kk]._score++;
+   }
+  });
+ }
  return Object.values(map)
   .filter(r=>r._score>=2)
   .filter(r=>!state.g||r._g===state.g)
@@ -489,7 +603,7 @@ function repeatUnder(k,eventId=''){
 }
 /*
  Consecutive Underperformers for score-based events.
- - Applies to Tinman, Dark Omens, Trials/Olympus, Ragnarök and Chest Points.
+ - Applies to Tinman, Dark Omens, Trials/Olympus and Chest Points by target; Ragnarök by mandatory participation.
  - Current unresolved streak only.
  - 3+ consecutive eligible failures are shown.
  - Meeting target resets streak to zero.
@@ -531,6 +645,10 @@ function consecutiveUnder(k,eventId=''){
    const participated=row?rowHasParticipation(k,row):false;
    const exempt=isPlayerExempt(groupId,member,groupDate);
    if(exempt&&!participated)return;
+   if(k==='ragnarok'){
+    if(participated)currentStreak=0; else currentStreak++;
+    return;
+   }
    const target=num(row?._target)||num(meta?._target);
    if(target<=0)return;
    const score=row?num(row._score):0;
@@ -553,7 +671,7 @@ const CONSOLIDATED_EVENTS=[
  {key:'tinman',label:'Tinman',short:'Tinman',type:'score'},
  {key:'darkOmens',label:'Dark Omens',short:'Dark Omens',type:'score'},
  {key:'trials',label:'Trials of Olympus',short:'Trials',type:'score'},
- {key:'ragnarok',label:'Ragnarök',short:'Ragnarök',type:'score'},
+ {key:'ragnarok',label:'Ragnarök',short:'Ragnarök',type:'participation'},
  {key:'chestpoints',label:'Chest Points',short:'Chest',type:'score'},
  {key:'vaults',label:'Vaults',short:'Vaults',type:'vault'}
 ];
@@ -615,6 +733,9 @@ function consolidatedPerformanceRows(){
     if(cfg.type==='vault'){
      eligible=true;
      success=!!row&&rowHasParticipation('vaults',row);
+    }else if(cfg.type==='participation'){
+     eligible=true;
+     success=!!row&&rowHasParticipation(cfg.key,row);
     }else{
      const target=num(row?._target)||num(meta._target);
      if(target<=0)return;
@@ -711,7 +832,7 @@ function renderConsolidatedPerformance(){
    matrixCell(r._events.tinman),matrixCell(r._events.darkOmens),matrixCell(r._events.trials),
    matrixCell(r._events.ragnarok),matrixCell(r._events.chestpoints),matrixCell(r._events.vaults)
   ],
-  'Success = target met or vault built. Failure = eligible result below target, missing result, or missing vault. Valid exemptions and periods outside membership are excluded.'
+  'Success = target met for target-based events, participation recorded for Ragnarök, or vault built. Failure = eligible non-compliance. Valid exemptions and periods outside membership are excluded.'
  )}
  `;
  chartPie('conClass',classificationCounts);
@@ -1134,7 +1255,7 @@ function enableAutomaticLayout(){
 }
 
 function renderDataHealth(){const rows=Object.entries(state.data).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>({_sheet:k,_count:v.length,_status:v.length?'Loaded':'Empty'}));$('app').innerHTML=`<section class="content-head glass"><h2>Data Health</h2><p class="sub">Platform data availability and record status.</p></section><section class="kpis">${kpiHtml([['Members',state.data.members.length],['Active',activeMembers().length],['Event Setup',state.data.eventSetup.length],['Growth Rows',state.data.growthRaw.length],['Event Rows',allEventRows().length],['Chest Points',state.data.chestpoints.length],['Vault Rows',state.data.vaults.length],['History Rows',state.data.playerStatusHistory.length],['Exemptions',state.data.eventExemptions.length]])}</section>${tableCard('Loaded Tables',rows,['Dataset','Rows','Status'],r=>[esc(r._sheet),fmt(r._count),statusBadge(r._status)])}`}
-function renderAll(){renderShell();renderEventSelector();renderHero();const map={overview:renderOverview,growth:renderGrowth,consolidated:renderConsolidatedPerformance,tinman:()=>renderEventModule('tinman','Tinman','Points'),darkOmens:()=>renderEventModule('darkOmens','Dark Omens','Essence'),trials:()=>renderEventModule('trials','Trials of Olympus','Points'),ragnarok:()=>renderEventModule('ragnarok','Ragnarök','Score'),chestpoints:()=>renderEventModule('chestpoints','Chest Points','Points'),vaults:renderVaults,exemptions:renderExemptions};(map[state.module]||renderOverview)();scheduleDynamicLayout(document)}
+function renderAll(){renderShell();renderEventSelector();renderHero();const map={overview:renderOverview,growth:renderGrowth,consolidated:renderConsolidatedPerformance,tinman:()=>renderEventModule('tinman','Tinman','Points'),darkOmens:()=>renderEventModule('darkOmens','Dark Omens','Essence'),trials:()=>renderEventModule('trials','Trials of Olympus','Points'),ragnarok:renderRagnarok,chestpoints:()=>renderEventModule('chestpoints','Chest Points','Points'),vaults:renderVaults,exemptions:renderExemptions};(map[state.module]||renderOverview)();scheduleDynamicLayout(document)}
 function latestPlayerHeroLevel(name){const kk=key(name);const rows=(state.data.growthRaw||[]).filter(r=>key(r._name)===kk&&r._week&&String(r._week).localeCompare('2026-08-01')>=0&&num(r._hero)>0).sort((a,b)=>String(b._week).localeCompare(String(a._week)));return rows.length?fmt(rows[0]._hero):''}
 function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent='Player not found.'} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show')} function renderProfile(){const m=memberByName(state.player)||{_name:state.player};$('modalTitle').textContent=m._name;$('profileGrid').innerHTML=kpiHtml([['G-Level',gBadge(m._g||memberG(m._name)||'-')],['Might',short(m._might)],['Hero Level',latestPlayerHeroLevel(m._name)],['Status',m._status||'-'],['Growth',getPlayerGrowthTotal(m._name)===null?'—':short(getPlayerGrowthTotal(m._name))]]);const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];$('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');renderProfileContent()} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
 function profileChart(title,id,sub='Player performance history.'){return `<section class="glass"><div class="panel-head"><div><h3>${esc(title)}</h3><p class="sub">${esc(sub)}</p></div></div><div class="panel-body"><div class="chartbox" id="${id}"></div></div></section>`}
@@ -1154,7 +1275,7 @@ function playerAchievementCards(name){const kk=key(name), best=(arr,prop,dataset
 function renderProfileContent(){const n=state.player,k=key(n);let content='', after=()=>{};
  if(state.profileTab==='summary'){
   const rows=playerTimeline(n);const growthRows=state.data.growthRaw.filter(r=>key(r._name)===k).sort((a,b)=>a._week.localeCompare(b._week));
-  content=playerAchievementCards(n)+profileChart('Player Growth Trend','profileSummaryGrowth','Growth over time.')+tableCard('Recent Event History',rows.slice(0,30),['Date','Event','G-Level','Detail','Result','Status'],r=>{if(r._type==='vault')return[esc(r._date),esc(r._event),gBadge(r._g),`Vault Level ${fmt(r._vault)}`,'1 Vault',statusBadge('Built')];return[esc(r._date),esc(r._event),gBadge(r._g),`Target ${fmt(r._target)}`,fmt(r._score),statusBadge(r._status)]},'Recent participation across all recorded events.');
+  content=playerAchievementCards(n)+profileChart('Player Growth Trend','profileSummaryGrowth','Growth over time.')+tableCard('Recent Event History',rows.slice(0,30),['Date','Event','G-Level','Detail','Result','Status'],r=>{if(r._type==='vault')return[esc(r._date),esc(r._event),gBadge(r._g),`Vault Level ${fmt(r._vault)}`,'1 Vault',statusBadge('Built')];if(r._type==='ragnarok')return[esc(r._date),esc(r._event),gBadge(r._g),'Mandatory Participation',fmt(r._score),statusBadge('Participated')];return[esc(r._date),esc(r._event),gBadge(r._g),`Target ${fmt(r._target)}`,fmt(r._score),statusBadge(r._status)]},'Recent participation across all recorded events.');
   after=()=>chartLine('profileSummaryGrowth',seriesFromRows(growthRows,'_week','_might'));
  }else if(state.profileTab==='growth'){
   const rows=state.data.growthRaw.filter(r=>key(r._name)===k).sort((a,b)=>a._week.localeCompare(b._week));
@@ -1169,7 +1290,11 @@ function renderProfileContent(){const n=state.player,k=key(n);let content='', af
   content=tableCard('Exemption History',rows,['Scope','Event','Event Date','From Date','To Date','Reason','Status'],r=>{const ed=eventDateForExemption(r);return[statusBadge(clean(r._eventId)?'One Event':'All Events'),esc(clean(r._eventId)?(r._eventName||r._eventId):'All Events'),esc(ed?isoDate(ed):'—'),esc(r._fromDate||'—'),esc(r._toDate||'Open-ended'),esc(r._reason),statusBadge(exemptionLifecycleStatus(r))]},'Complete exemption history. Open-ended global exemptions remain active until a To Date is entered.');
  }else{
   const rows=rowsForPlayer(state.profileTab,n);
-  content=profileChart(label(state.profileTab)+' Performance Trend','profileEventChart',label(state.profileTab)+' performance over time.')+tableCard(label(state.profileTab)+' History',newestFirst(rows),['Date','Event ID','G-Level','Target','Score','Status'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._target),fmt(r._score),statusBadge(r._status||((r._score>=r._target)?'Met Target':'Below Target'))],`${label(state.profileTab)} performance history, with the latest event shown first.`);
+  if(state.profileTab==='ragnarok'){
+   content=profileChart('Ragnarök Performance Trend','profileEventChart','Ragnarök score history over time.')+tableCard('Ragnarök History',newestFirst(rows),['Date','Event ID','G-Level','Score','Participation'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._score),statusBadge('Participated')],'Ragnarök participation and score history, with the latest event shown first.');
+  }else{
+   content=profileChart(label(state.profileTab)+' Performance Trend','profileEventChart',label(state.profileTab)+' performance over time.')+tableCard(label(state.profileTab)+' History',newestFirst(rows),['Date','Event ID','G-Level','Target','Score','Status'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._target),fmt(r._score),statusBadge(r._status||((r._score>=r._target)?'Met Target':'Below Target'))],`${label(state.profileTab)} performance history, with the latest event shown first.`);
+  }
   after=()=>chartLine('profileEventChart',seriesFromRows(rows,'_event','_score'));
  }
  $('profileContent').innerHTML=content; after(); scheduleDynamicLayout($('profileContent'));
