@@ -51,7 +51,23 @@ label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-trans
 .matrix-cell{display:inline-flex;align-items:center;justify-content:center;min-width:58px;padding:4px 8px;border-radius:10px;font-size:11px;font-weight:900}
 .matrix-cell.met{color:#9ff0c7;background:rgba(56,217,150,.13)}.matrix-cell.fail{color:#ffb6c0;background:rgba(255,107,125,.13)}.matrix-cell.na{color:#cbd5e1;background:rgba(148,163,184,.12)}
 @media(max-width:1350px){.top{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-cards{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:repeat(4,1fr)}.intel-grid,.score-intel-grid,.growth-intel-grid,.g-roster-grid,.dynamic-pack,.dynamic-pack.two-col,.vault-menu{grid-template-columns:1fr}.profile-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}@media(max-width:760px){.wrap{width:min(100% - 10px,1780px)}.hero-cards,.kpis,.profile-grid{grid-template-columns:1fr}.searchbox{grid-template-columns:1fr}h1{font-size:34px}table{min-width:860px}}
+
+.back-to-top{
+  position:fixed;right:22px;bottom:22px;width:50px;height:50px;border-radius:50%;
+  border:1px solid rgba(148,197,253,.45);
+  background:linear-gradient(135deg,rgba(56,189,248,.88),rgba(167,139,250,.82));
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;line-height:1;
+  cursor:pointer;box-shadow:0 16px 40px rgba(0,0,0,.38);z-index:2500;opacity:0;visibility:hidden;
+  transform:translateY(10px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease,filter .2s ease;
+}
+.back-to-top.show{opacity:1;visibility:visible;transform:translateY(0)}
+.back-to-top:hover{filter:brightness(1.08)}
+.back-to-top:focus-visible{outline:3px solid rgba(186,230,253,.85);outline-offset:3px}
+@media(max-width:760px){.back-to-top{right:14px;bottom:14px;width:46px;height:46px;font-size:22px}}
+
 </style></head><body>
+<button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">↑</button>
+
 <div class="wrap"><section class="top glass"><div class="brand"><span class="dot"></span><span>WOA Live Intelligence Platform V9</span></div><div><label for="search">Player Search</label><div class="searchbox"><input class="input" id="search" list="suggestions" placeholder="Search player name..." autocomplete="off"><button class="btn" id="searchBtn">Search</button></div><datalist id="suggestions"></datalist><div class="msg" id="searchMsg">Connecting to the live WoA intelligence feed...</div></div><div><label for="eventSelect">Event / Week</label><select class="select" id="eventSelect"></select></div><div><label for="gFilter">G-Level</label><select class="select" id="gFilter"><option value="">All G-Levels</option></select></div></section><div id="warningBanner" class="warn-banner"></div><section class="hero glass"><div><div class="brand"><span class="dot"></span> Live Intelligence</div><h1>WoA Intelligence Platform</h1><p>Live monitoring of clan performance, participation and player development across every recorded event.</p></div><div class="hero-cards" id="heroCards"></div></section><section class="glass"><div class="tabs" id="tabs"></div></section><main id="app"></main></div>
 <div id="chartTooltip" class="tooltip"></div>
 <div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><div><h2 class="modal-title" id="modalTitle">Player Profile</h2><p class="sub" id="modalSub">Player performance and progression across recorded events.</p></div><button class="close" id="closeModal">×</button></div><div class="modal-body"><div class="profile-grid" id="profileGrid"></div><div class="profile-tabs" id="profileTabs"></div><div id="profileContent"></div></div></div></div>
@@ -353,7 +369,7 @@ function renderGrowth(){const weeks=growthWeeks(),latest=state.selected||(weeks.
   </div>
   <div class="dynamic-column">
     ${growthListCard('Members Left',left,'Left',r=>short(r._might),'Players present in the previous week but absent from the selected week.')}
-    ${growthMetricCard('Highest Improvers',[...positive].sort((a,b)=>b._change-a._change).slice(0,10),'Growth','Strongest week-on-week growth among comparable players.')}
+    ${growthMetricCard('Highest Improvers',[...positive].filter(r=>Number.isFinite(r._growthPct)).sort((a,b)=>b._growthPct-a._growthPct||num(b._change)-num(a._change)).slice(0,10),'Growth','Strongest week-on-week growth among comparable players.')}
   </div>
   <div class="dynamic-column">
     ${growthListCard('New Members',newMembers,'New',r=>short(r._might),'Players appearing for the first time in the selected reporting history.')}
@@ -1159,4 +1175,15 @@ function renderProfileContent(){const n=state.player,k=key(n);let content='', af
  $('profileContent').innerHTML=content; after(); scheduleDynamicLayout($('profileContent'));
 }
 window.openProfile=openProfile;window.renderProfileContent=renderProfileContent;window.setProfileTab=setProfileTab;initLive();
+
+/* Floating Back-to-Top control */
+(function(){
+ const btn=document.getElementById('backToTop');
+ if(!btn)return;
+ const update=()=>btn.classList.toggle('show',window.scrollY>450);
+ window.addEventListener('scroll',update,{passive:true});
+ btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+ update();
+})();
+
 </script></body></html>
