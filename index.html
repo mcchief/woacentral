@@ -118,7 +118,77 @@ function rowsToObjects(matrix,name=''){
 function normalizeCell(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);let s=clean(v);let m=s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})\)$/);if(m){let d=new Date(+m[1],+m[2],+m[3]);return d.toISOString().slice(0,10)}return s}
 function sheetMeta(url){const gid=(url.match(/[?&]gid=(\d+)/)||[])[1]||'0';const pub=(url.match(/\/d\/e\/([^/]+)\//)||[])[1];return{pub,gid}}
 function loadGvizMatrix(name,url){return new Promise(resolve=>{const m=sheetMeta(url);if(!m.pub)return resolve([]);const cb='__woa_live_'+name.replace(/\W/g,'_')+'_'+Date.now();let done=false,script=null;const finish=(rows)=>{if(done)return;done=true;try{delete window[cb]}catch(e){};if(script&&script.parentNode)script.parentNode.removeChild(script);resolve(rows||[])};window[cb]=(resp)=>{try{const matrix=(resp.table.rows||[]).map(r=>(r.c||[]).map(c=>c?(c.f??c.v??''):''));finish(rowsToObjects(matrix,name))}catch(e){console.warn('GViz parse failed',name,e);finish([])}};script=document.createElement('script');script.onerror=()=>finish([]);script.src=`https://docs.google.com/spreadsheets/d/e/${m.pub}/gviz/tq?gid=${m.gid}&headers=0&tqx=out:json;responseHandler:${cb}`;document.body.appendChild(script);setTimeout(()=>finish([]),15000)})}
-async function loadSheet(name,url){LIVE_STATUS[name]={status:'Loading',rows:0,error:''};try{const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),10000);const res=await fetch(url+'&cacheBust='+Date.now(),{cache:'no-store',signal:ctrl.signal});clearTimeout(t);if(res.ok){const txt=await res.text();if(!/^\s*</.test(txt)){const rows=rowsToObjects(parseCSVMatrix(txt),name);if(rows.length){LIVE_STATUS[name]={status:'Loaded',rows:rows.length,error:''};return rows}}}}catch(e){LIVE_STATUS[name]={status:'CSV failed',rows:0,error:e.message}}const rows=await loadGvizMatrix(name,url);LIVE_STATUS[name]=rows.length?{status:'Loaded',rows:rows.length,error:''}:{status:'Empty/Failed',rows:0,error:'No usable rows returned'};return rows}
+async function loadSheet(name,url){
+ LIVE_STATUS[name]={status:'Loading',rows:0,error:'',source:'',attempts:0};
+
+ let sawConnectionFailure=false;
+ let lastError='';
+ let sawReachableResponse=false;
+
+ // Stage 1: published CSV, with one retry.
+ for(let attempt=1;attempt<=2;attempt++){
+  LIVE_STATUS[name].attempts++;
+  try{
+   const ctrl=new AbortController();
+   const t=setTimeout(()=>ctrl.abort(),10000);
+   const sep=url.includes('?')?'&':'?';
+   const res=await fetch(url+sep+'cacheBust='+Date.now()+'_'+attempt,{cache:'no-store',signal:ctrl.signal});
+   clearTimeout(t);
+
+   if(!res.ok){
+    sawConnectionFailure=true;
+    lastError='CSV HTTP '+res.status;
+   }else{
+    sawReachableResponse=true;
+    const txt=await res.text();
+    if(/^\s*</.test(txt)){
+     lastError='CSV returned HTML instead of data';
+    }else{
+     const rows=rowsToObjects(parseCSVMatrix(txt),name);
+     if(rows.length){
+      LIVE_STATUS[name]={status:'Live',rows:rows.length,error:'',source:'CSV',attempts:LIVE_STATUS[name].attempts};
+      return rows;
+     }
+     lastError='CSV connected but returned no usable rows';
+    }
+   }
+  }catch(e){
+   sawConnectionFailure=true;
+   lastError=e&&e.name==='AbortError'?'CSV request timed out':(e?.message||'CSV request failed');
+  }
+
+  if(attempt<2)await new Promise(r=>setTimeout(r,350));
+ }
+
+ // Stage 2: GViz fallback, also retried once.
+ for(let attempt=1;attempt<=2;attempt++){
+  LIVE_STATUS[name].attempts++;
+  try{
+   const rows=await loadGvizMatrix(name,url);
+   if(rows.length){
+    LIVE_STATUS[name]={status:'Live',rows:rows.length,error:'',source:'GViz',attempts:LIVE_STATUS[name].attempts};
+    return rows;
+   }
+   sawReachableResponse=true;
+   lastError='GViz returned no usable rows';
+  }catch(e){
+   sawConnectionFailure=true;
+   lastError=e?.message||'GViz request failed';
+  }
+
+  if(attempt<2)await new Promise(r=>setTimeout(r,350));
+ }
+
+ // Distinguish connectivity failure from an empty/invalid data condition.
+ LIVE_STATUS[name]={
+  status:sawConnectionFailure&&!sawReachableResponse?'Connection Failed':'Empty/Invalid',
+  rows:0,
+  error:lastError||'No usable rows returned',
+  source:'',
+  attempts:LIVE_STATUS[name].attempts
+ };
+ return [];
+}
 function mapMember(r){return{_id:field(r,['Player ID','ID']),_name:field(r,['Official Player Name','Player Name','Name','Player']),_g:field(r,['Current G-Level','G-Level','G Level']),_vault:num(field(r,['Current Vault Level','Vault Level'])),_might:num(field(r,['Current Might','Might'])),_status:field(r,['Current Status','Status'])||'Active',_join:field(r,['Join Date','Date Joined']),_left:field(r,['Date Left','Left Date'])}}
 function mapEventRow(r){return{_eventId:field(r,['Event ID','EventID']),_event:field(r,['Event Date','Date','Week']),_available:num(field(r,['Available Members','Eligible Members'])),_rank:num(field(r,['Rank'])),_name:field(r,['Player Name','Official Player Name','Name','Player']),_id:field(r,['Player ID','ID']),_g:field(r,['G-Level','G Level','Current G-Level']),_vault:num(field(r,['Vault Level','Current Vault Level'])),_might:num(field(r,['Current Might','Might'])),_target:num(field(r,['Target','Required','Minimum'])),_score:num(field(r,['Result / Score','Score','Points','Essence','Result','Value'])),_status:field(r,['Result Status','Status','Current Status']),_buildTime:field(r,['Local Build Time','Build Time']),_resetOffset:field(r,['Reset Offset']),_utcOffset:field(r,['UTC Offset']),_chests:num(field(r,['Chests','Chest Count']))}}
 function mapEventSetup(r){return{_id:field(r,['Event ID','EventID']),_name:field(r,['Event Name','Name']),_type:field(r,['Event Type','Type']),_date:field(r,['Event Date','Date']),_target:num(field(r,['Target','Default Target'])),_available:num(field(r,['Available Members','Eligible Members']))}}
@@ -126,7 +196,7 @@ function normalizeWeek(v){v=clean(v);if(!v)return'';let d=parseAnyDate(v);if(d&&
 function mapGrowth(r){return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_week:normalizeWeek(field(r,['Week','Week Start','Event Date','Date'])),_might:num(field(r,['Current Might','Might','Total Might'])),_g:field(r,['G-Level','G Level','Current G-Level']),_hero:num(field(r,['Hero Level','Hero','Current Hero Level'])),_duplicate:field(r,['Duplicate Check','Duplicate','Duplicate Status'])}}
 function mapStatusHistory(r){const ev=field(r,['Event Date','Date','Week']); return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_event:ev,_eventId:field(r,['Event ID','EventID']),_eventName:field(r,['Event Name','Name','Event']),_g:field(r,['G-Level','G Level','Current G-Level']),_target:num(field(r,['Target','Required','Minimum'])),_score:num(field(r,['Result / Score','Score','Points','Essence','Result','Value'])),_status:field(r,['Status','Current Status','Result Status'])}}
 function mapEventExemption(r){return{_eventId:field(r,['Event ID','EventID','Event Id']),_event:field(r,['Event Date','Date','Week']),_eventName:field(r,['Event Name','Name','Event','Event Type']),_id:field(r,['Player ID','ID','Player Id']),_name:field(r,['Player Name','Official Player Name','Name','Player']),_reason:field(r,['Reason','Exemption Reason','Notes','Comment']),_fromDate:field(r,['From Date','Start Date','Date From','Exemption From']),_toDate:field(r,['To Date','End Date','Date To','Exemption To']),_status:field(r,['Status','Exemption Status','Current Status'])||'Active'}}
-async function initLive(){try{document.getElementById('searchMsg').textContent='Connecting to the live WoA intelligence feed...';document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Starting Live Intelligence</h2><p class="sub">Preparing current WoA intelligence.</p></section>';const raw={};await Promise.all(Object.entries(CONFIG).map(async([k,u])=>{raw[k]=await loadSheet(k,u)}));let liveGrowth=(raw.growth||[]);if(!liveGrowth.length&&Array.isArray(GROWTH_FALLBACK)&&GROWTH_FALLBACK.length){liveGrowth=GROWTH_FALLBACK;LIVE_STATUS.growth={status:'Loaded from workbook fallback',rows:liveGrowth.length,error:'Live Growth sheet returned no rows; using embedded workbook snapshot.'}}state.data={settings:raw.settings||[],members:(raw.members||[]).map(mapMember).filter(r=>r._name),eventSetup:(raw.eventSetup||[]).map(mapEventSetup).filter(r=>r._id||r._name),growthRaw:liveGrowth.map(mapGrowth).filter(r=>r._name&&r._week&&r._might>0),tinman:(raw.tinman||[]).map(mapEventRow).filter(r=>r._name),darkOmens:(raw.darkOmens||[]).map(mapEventRow).filter(r=>r._name),trials:(raw.trials||[]).map(mapEventRow).filter(r=>r._name),ragnarok:(raw.ragnarok||[]).map(mapEventRow).filter(r=>r._name),chestpoints:(raw.chestpoints||[]).map(mapEventRow).filter(r=>r._name),vaults:(raw.vaults||[]).map(mapEventRow).filter(r=>r._name),playerStatusHistory:(raw.playerStatusHistory||[]).map(mapStatusHistory).filter(r=>r._name),eventExemptions:(raw.eventExemptions||[]).map(mapEventExemption).filter(r=>(r._id||r._name)&&r._reason)};setupControls();renderAll();enableAutomaticLayout();updateHealthWarnings();document.getElementById('searchMsg').textContent='Live intelligence synchronized. Rankings and insights are current.'}catch(e){document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Startup Error</h2><p class="sub">'+esc(e.message)+'</p></section>';console.error(e)}}
+async function initLive(){try{document.getElementById('searchMsg').textContent='Connecting to the live WoA intelligence feed...';document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Starting Live Intelligence</h2><p class="sub">Preparing current WoA intelligence.</p></section>';const raw={};await Promise.all(Object.entries(CONFIG).map(async([k,u])=>{raw[k]=await loadSheet(k,u)}));let liveGrowth=(raw.growth||[]);if(!liveGrowth.length&&Array.isArray(GROWTH_FALLBACK)&&GROWTH_FALLBACK.length){liveGrowth=GROWTH_FALLBACK;LIVE_STATUS.growth={status:'Fallback Active',rows:liveGrowth.length,error:'Live Growth source unavailable; using embedded workbook snapshot.',source:'Workbook Fallback',attempts:LIVE_STATUS.growth?.attempts||0}}state.data={settings:raw.settings||[],members:(raw.members||[]).map(mapMember).filter(r=>r._name),eventSetup:(raw.eventSetup||[]).map(mapEventSetup).filter(r=>r._id||r._name),growthRaw:liveGrowth.map(mapGrowth).filter(r=>r._name&&r._week&&r._might>0),tinman:(raw.tinman||[]).map(mapEventRow).filter(r=>r._name),darkOmens:(raw.darkOmens||[]).map(mapEventRow).filter(r=>r._name),trials:(raw.trials||[]).map(mapEventRow).filter(r=>r._name),ragnarok:(raw.ragnarok||[]).map(mapEventRow).filter(r=>r._name),chestpoints:(raw.chestpoints||[]).map(mapEventRow).filter(r=>r._name),vaults:(raw.vaults||[]).map(mapEventRow).filter(r=>r._name),playerStatusHistory:(raw.playerStatusHistory||[]).map(mapStatusHistory).filter(r=>r._name),eventExemptions:(raw.eventExemptions||[]).map(mapEventExemption).filter(r=>(r._id||r._name)&&r._reason)};setupControls();renderAll();enableAutomaticLayout();updateHealthWarnings();document.getElementById('searchMsg').textContent=Object.values(LIVE_STATUS).some(v=>v&&v.status==='Fallback Active')?'Intelligence loaded. Some data is using an approved fallback snapshot.':'Live intelligence synchronized. Rankings and insights are current.'}catch(e){document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Startup Error</h2><p class="sub">'+esc(e.message)+'</p></section>';console.error(e)}}
 const MODULES=[['overview','🏠 Overview'],['growth','📈 Growth'],['consolidated','🏆 Consolidated Performance'],['tinman','⚔ Tinman'],['darkOmens','🌑 Dark Omens'],['trials','🏛 Trials'],['ragnarok','🪓 Ragnarök'],['chestpoints','🎯 Chest Points'],['vaults','🏰 Vaults'],['exemptions','🛡 Exemptions']];
 const state={module:'overview',selected:'',g:'',profileTab:'summary',player:'',data:{}};
 const $=id=>document.getElementById(id); const clean=s=>(s??'').toString().trim(); const key=s=>clean(s).toUpperCase().replace(/\s+/g,''); const num=v=>{let n=parseFloat(clean(v).replace(/,/g,''));return isNaN(n)?0:n}; const fmt=n=>Number(num(n)||0).toLocaleString(); const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0%'; const short=n=>{n=num(n); if(Math.abs(n)>=1e9)return(n/1e9).toFixed(2)+'B'; if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+'M'; if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+'K'; return fmt(n)}; const esc=s=>clean(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); const escAttr=s=>esc(s).replace(/'/g,'&#39;');
@@ -664,7 +734,54 @@ function eligibleMembersForDate(eventDate){
  if(!eventDate)return activeRosterMembers();
  return state.data.members.filter(m=>memberIsActiveForDate(m._name,eventDate));
 }
-function updateHealthWarnings(){const failed=Object.entries(LIVE_STATUS).filter(([k,v])=>v&&v.status!=='Loaded');const el=$('warningBanner');if(!el)return;if(!failed.length){el.classList.remove('show');el.innerHTML='';return}el.classList.add('show');el.innerHTML='⚠ Some live Google Sheets did not return usable data: '+failed.map(([k])=>esc(k)).join(', ')+'. Other modules continue to work.'}
+function updateHealthWarnings(){
+ const el=$('warningBanner');
+ if(!el)return;
+
+ const critical={
+  members:'Player roster',
+  eventSetup:'Event setup',
+  growth:'Growth',
+  tinman:'Tinman',
+  darkOmens:'Dark Omens',
+  trials:'Trials of Olympus',
+  ragnarok:'Ragnarök',
+  chestpoints:'Chest Points',
+  vaults:'Vaults'
+ };
+
+ const isLive=v=>!!(v&&v.status==='Live'&&num(v.rows)>0);
+ const isFallback=v=>!!(v&&v.status==='Fallback Active'&&num(v.rows)>0);
+
+ // Keep complete diagnostics technical and out of the normal user-facing view.
+ const diagnostics=Object.entries(LIVE_STATUS).map(([source,info])=>({
+  source,
+  state:isLive(info)?'LIVE':isFallback(info)?'FALLBACK':info?.status||'UNKNOWN',
+  rows:num(info?.rows),
+  via:info?.source||'',
+  attempts:num(info?.attempts),
+  error:info?.error||''
+ }));
+ console.info('WoA live data health:',diagnostics);
+
+ // Public warning only when a critical module has neither live data nor a valid fallback.
+ const unavailable=Object.entries(critical)
+  .filter(([source])=>{
+   const info=LIVE_STATUS[source];
+   return info && !isLive(info) && !isFallback(info);
+  });
+
+ if(!unavailable.length){
+  el.classList.remove('show');
+  el.innerHTML='';
+  return;
+ }
+
+ el.classList.add('show');
+ el.innerHTML='⚠ Live data is temporarily unavailable for: '+
+  unavailable.map(([,label])=>esc(label)).join(', ')+
+  '. Other available intelligence remains accessible.';
+}
 
 
 const CONSOLIDATED_EVENTS=[
