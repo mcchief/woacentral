@@ -45,9 +45,11 @@ label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-trans
 .exempt-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;min-height:20px;padding:0 7px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.04em;color:#a8ecff;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.35);vertical-align:middle}
 .empty{padding:22px;border:1px dashed var(--line);border-radius:18px;color:#d7ebff;background:rgba(255,255,255,.035);line-height:1.6}
 .barwrap{display:flex;align-items:end;gap:10px;height:100%;padding:12px}.baritem{flex:1;min-width:36px;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;height:100%}.bar{border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,rgba(56,189,248,.85),rgba(167,139,250,.65));border:1px solid rgba(255,255,255,.18)}.barlabel{font-size:10px;color:#d7ebff;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tooltip{position:fixed;z-index:2000;display:none;pointer-events:none;max-width:260px;padding:10px 12px;border-radius:14px;border:1px solid rgba(148,197,253,.35);background:rgba(7,18,35,.96);box-shadow:0 18px 45px rgba(0,0,0,.45);color:#f7fbff;font-size:12px;line-height:1.45}.tooltip b{display:block;font-size:13px;margin-bottom:4px;color:#fff}.tooltip .muted{color:#b8d7f5}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,8,18,.78);backdrop-filter:blur(8px);z-index:999;padding:14px}.modal.show{display:flex}.modal-card{width:min(1320px,100%);max-height:94vh;overflow:hidden;border-radius:24px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(14,27,50,.985),rgba(8,18,36,.985));box-shadow:0 26px 80px rgba(0,0,0,.5)}.modal-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid rgba(255,255,255,.08)}.modal-title{font-size:26px}.modal-body{padding:16px 20px 20px;overflow:auto;max-height:calc(94vh - 88px)}.close{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;font-size:22px;font-weight:900;cursor:pointer}.profile-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}.profile-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.profile-tabs .tab{padding:8px 12px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,8,18,.78);backdrop-filter:blur(8px);z-index:999;padding:14px}.modal.show{display:flex}.modal-card{width:min(1320px,100%);max-height:94vh;overflow:hidden;border-radius:24px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(14,27,50,.985),rgba(8,18,36,.985));box-shadow:0 26px 80px rgba(0,0,0,.5)}.modal-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid rgba(255,255,255,.08)}.modal-title{font-size:26px}.modal-body{padding:16px 20px 20px;overflow:auto;max-height:calc(94vh - 88px)}.close{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;font-size:22px;font-weight:900;cursor:pointer}.profile-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}.profile-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.profile-tabs .tab{padding:8px 12px}
 .performance-score{display:inline-flex;align-items:center;justify-content:center;min-width:64px;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid currentColor;background:rgba(255,255,255,.06)}
 .performance-score.high{color:#9ff0c7}.performance-score.mid{color:#ffe68a}.performance-score.low{color:#ffb6c0}.performance-score.limited{color:#cbd5e1}
+.profile-grid .performance-score{white-space:normal;text-align:center;line-height:1.2;min-height:34px}
+.profile-grid .kpi .value:has(.performance-score){font-size:14px;letter-spacing:0}
 .matrix-cell{display:inline-flex;align-items:center;justify-content:center;min-width:58px;padding:4px 8px;border-radius:10px;font-size:11px;font-weight:900}
 .matrix-cell.met{color:#9ff0c7;background:rgba(56,217,150,.13)}.matrix-cell.fail{color:#ffb6c0;background:rgba(255,107,125,.13)}.matrix-cell.na{color:#cbd5e1;background:rgba(148,163,184,.12)}
 @media(max-width:1350px){.top{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-cards{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:repeat(4,1fr)}.intel-grid,.score-intel-grid,.growth-intel-grid,.g-roster-grid,.dynamic-pack,.dynamic-pack.two-col,.vault-menu{grid-template-columns:1fr}.profile-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}@media(max-width:760px){.wrap{width:min(100% - 10px,1780px)}.hero-cards,.kpis,.profile-grid{grid-template-columns:1fr}.searchbox{grid-template-columns:1fr}h1{font-size:34px}table{min-width:860px}}
@@ -819,9 +821,9 @@ function bestPlayerRow(rows,member,dataset){
  if(dataset==='vaults')return matches.sort((a,b)=>num(b._vault)-num(a._vault))[0];
  return matches.sort((a,b)=>num(b._score)-num(a._score))[0];
 }
-function consolidatedPerformanceRows(){
+function consolidatedPerformanceRows(ignoreGFilter=false){
  let roster=activeRosterMembers().map(m=>({...m,_g:m._g||memberG(m._name)}));
- if(state.g)roster=roster.filter(m=>m._g===state.g);
+ if(state.g&&!ignoreGFilter)roster=roster.filter(m=>m._g===state.g);
 
  const result=new Map(roster.map(m=>[key(m._id||m._name),{
   _id:m._id,_name:m._name,_g:m._g,_status:m._status,
@@ -1373,8 +1375,55 @@ function enableAutomaticLayout(){
 
 function renderDataHealth(){const rows=Object.entries(state.data).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>({_sheet:k,_count:v.length,_status:v.length?'Loaded':'Empty'}));$('app').innerHTML=`<section class="content-head glass"><h2>Data Health</h2><p class="sub">Platform data availability and record status.</p></section><section class="kpis">${kpiHtml([['Members',state.data.members.length],['Active',activeMembers().length],['Event Setup',state.data.eventSetup.length],['Growth Rows',state.data.growthRaw.length],['Event Rows',allEventRows().length],['Chest Points',state.data.chestpoints.length],['Vault Rows',state.data.vaults.length],['History Rows',state.data.playerStatusHistory.length],['Exemptions',state.data.eventExemptions.length]])}</section>${tableCard('Loaded Tables',rows,['Dataset','Rows','Status'],r=>[esc(r._sheet),fmt(r._count),statusBadge(r._status)])}`}
 function renderAll(){renderShell();renderEventSelector();renderHero();const map={overview:renderOverview,growth:renderGrowth,consolidated:renderConsolidatedPerformance,tinman:()=>renderEventModule('tinman','Tinman','Points'),darkOmens:()=>renderEventModule('darkOmens','Dark Omens','Essence'),trials:()=>renderEventModule('trials','Trials of Olympus','Points'),ragnarok:renderRagnarok,chestpoints:()=>renderEventModule('chestpoints','Chest Points','Points'),vaults:renderVaults,exemptions:renderExemptions};(map[state.module]||renderOverview)();scheduleDynamicLayout(document)}
-function latestPlayerHeroLevel(name){const kk=key(name);const rows=(state.data.growthRaw||[]).filter(r=>key(r._name)===kk&&r._week&&String(r._week).localeCompare('2026-08-01')>=0&&num(r._hero)>0).sort((a,b)=>String(b._week).localeCompare(String(a._week)));return rows.length?fmt(rows[0]._hero):''}
-function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent='Player not found.'} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show')} function renderProfile(){const m=memberByName(state.player)||{_name:state.player};$('modalTitle').textContent=m._name;$('profileGrid').innerHTML=kpiHtml([['G-Level',gBadge(m._g||memberG(m._name)||'-')],['Might',short(m._might)],['Hero Level',latestPlayerHeroLevel(m._name)],['Status',m._status||'-'],['Growth',getPlayerGrowthTotal(m._name)===null?'—':short(getPlayerGrowthTotal(m._name))]]);const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];$('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');renderProfileContent()} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
+function latestPlayerGrowthRecord(name){
+ const kk=key(name);
+ const rows=(state.data.growthRaw||[])
+  .filter(r=>key(r._name)===kk&&r._week)
+  .sort((a,b)=>String(b._week).localeCompare(String(a._week)));
+ return rows[0]||null;
+}
+function latestPlayerHeroLevel(name){
+ const kk=key(name);
+ const rows=(state.data.growthRaw||[])
+  .filter(r=>key(r._name)===kk&&r._week&&String(r._week).localeCompare('2026-08-01')>=0&&num(r._hero)>0)
+  .sort((a,b)=>String(b._week).localeCompare(String(a._week)));
+ return rows.length?fmt(rows[0]._hero):'';
+}
+function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent='Player not found.'} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show')} function profileClassificationBadge(classification){
+ const cls=classification==='Consistent Performer'?'high':
+  classification==='Consistent Underperformer'?'low':
+  classification==='Mixed Performance'?'mid':'limited';
+ return `<span class="performance-score ${cls}">${esc(classification||'Limited Data')}</span>`;
+}
+function renderProfile(){
+ const m=memberByName(state.player)||{_name:state.player};
+ const latestGrowth=latestPlayerGrowthRecord(m._name);
+ const profileG=(latestGrowth&&clean(latestGrowth._g))?latestGrowth._g:(m._g||memberG(m._name)||'-');
+ const profileMight=(latestGrowth&&num(latestGrowth._might)>0)?latestGrowth._might:num(m._might);
+ const totalGrowth=getPlayerGrowthTotal(m._name);
+
+ // Single source of truth: this is the player's row from Consolidated Performance.
+ const consolidatedRow=consolidatedPerformanceRows(true).find(r=>
+  (clean(m._id)&&clean(r._id)&&key(r._id)===key(m._id))||key(r._name)===key(m._name)
+ );
+ const classification=consolidatedRow?consolidatedRow._classification:'Limited Data';
+ const classificationNote=consolidatedRow
+  ?`${consolidatedRow._rate.toFixed(1)}% success · ${consolidatedRow._eligible} eligible records · ${consolidatedRow._coverage} event types`
+  :'Insufficient consolidated performance data';
+
+ $('modalTitle').textContent=m._name;
+ $('profileGrid').innerHTML=kpiHtml([
+  ['G-Level',gBadge(profileG)],
+  ['Might',profileMight>0?short(profileMight):'—'],
+  ['Hero Level',latestPlayerHeroLevel(m._name)||'—'],
+  ['Status',m._status||'-'],
+  ['Growth',totalGrowth===null?'—':short(totalGrowth)],
+  ['Classification',profileClassificationBadge(classification),classificationNote]
+ ]);
+ const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];
+ $('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');
+ renderProfileContent();
+} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
 function profileChart(title,id,sub='Player performance history.'){return `<section class="glass"><div class="panel-head"><div><h3>${esc(title)}</h3><p class="sub">${esc(sub)}</p></div></div><div class="panel-body"><div class="chartbox" id="${id}"></div></div></section>`}
 function rowsForPlayer(dataset,name){const kk=key(name);return (state.data[dataset]||[]).filter(r=>key(r._name)===kk&&rowHasParticipation(dataset,r)).sort((a,b)=>String(a._event||a._week).localeCompare(String(b._event||b._week)))}
 function newestFirst(rows,dateField='_event'){return [...(rows||[])].sort((a,b)=>String(b?.[dateField]||'').localeCompare(String(a?.[dateField]||'')))}
