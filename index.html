@@ -11,12 +11,18 @@ label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-trans
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 12px;align-items:start;width:100%}.kpi{border-radius:18px;background:rgba(255,255,255,.055);border:1px solid var(--line);padding:14px;min-height:92px}.kpi.info{background:linear-gradient(180deg,rgba(14,116,144,.70),rgba(12,74,110,.80))}.kpi.good{background:linear-gradient(180deg,rgba(26,77,65,.72),rgba(14,38,36,.78))}.kpi.purple{background:linear-gradient(180deg,rgba(88,28,135,.72),rgba(59,7,100,.82))}.kpi.warn{background:linear-gradient(180deg,rgba(92,67,28,.72),rgba(40,30,15,.82))}.kpi.bad{background:linear-gradient(180deg,rgba(95,34,48,.72),rgba(43,17,24,.82))}
 .label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:900}.value{font-weight:900;font-size:clamp(24px,2.5vw,38px);line-height:1;margin-top:10px;letter-spacing:-.04em}.note{font-size:12px;color:#d7ebff;margin-top:8px;line-height:1.45;font-weight:700}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px}.tab{border:1px solid var(--line);background:rgba(255,255,255,.055);color:#fff;border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer}.tab.active,.btn:hover,.tab:hover{background:linear-gradient(135deg,rgba(56,189,248,.36),rgba(167,139,250,.3));border-color:rgba(147,197,253,.55)}
-.content-head{padding:16px 18px}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:start}.intel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;align-items:start;grid-auto-flow:dense}.growth-intel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;align-items:start}.growth-intel-grid .glass{margin-bottom:0}.g-roster-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;align-items:start}.g-roster-column{display:flex;flex-direction:column;gap:12px;min-width:0}.g-roster-grid .glass{margin-bottom:0}.g-roster-grid .list li{grid-template-columns:minmax(0,1fr) 120px}
+.content-head{padding:16px 18px}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:start}.intel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;align-items:start;grid-auto-flow:dense}.score-intel-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px;align-items:start}.score-intel-grid .glass{margin-bottom:0}.growth-intel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;align-items:start}.growth-intel-grid .glass{margin-bottom:0}
+.growth-pack-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px;align-items:start}
+.growth-pack-grid .dynamic-column{display:flex;flex-direction:column;gap:12px;min-width:0}
+.growth-pack-grid .dynamic-column>.glass{margin-bottom:0}
+@media(max-width:1350px){.growth-pack-grid{grid-template-columns:1fr}}.g-roster-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;align-items:start}.g-roster-column{display:flex;flex-direction:column;gap:12px;min-width:0}.g-roster-grid .glass{margin-bottom:0}.g-roster-grid .list li{grid-template-columns:minmax(0,1fr) 90px 120px}
+.g-roster-head{display:grid;grid-template-columns:minmax(0,1fr) 90px 120px;gap:10px;align-items:center;padding:2px 0 9px;margin-bottom:1px;border-bottom:1px solid rgba(255,255,255,.13);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.g-roster-head span:nth-child(2),.g-roster-head span:nth-child(3){text-align:left}
 .dynamic-pack{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px;align-items:start}
 .dynamic-pack.two-col{grid-template-columns:repeat(2,minmax(0,1fr))}
 .dynamic-column{display:flex;flex-direction:column;gap:12px;min-width:0}
 .dynamic-column>.glass{margin-bottom:0}
-.dynamic-hidden{display:none!important}.vault-menu{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px;align-items:start}.vault-menu .glass{margin-bottom:0}.panel-head{padding:14px 16px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.panel-body{padding:14px 16px 16px}.chartbox{height:330px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035);padding:10px;overflow:hidden}.chip{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:0 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:11px;font-weight:900;color:#eaf7ff}
+.dynamic-hidden{display:none!important}.vault-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px;align-items:start}.vault-menu .glass{margin-bottom:0}.panel-head{padding:14px 16px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.panel-body{padding:14px 16px 16px}.chartbox{height:330px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035);padding:10px;overflow:hidden}.chip{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:0 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:11px;font-weight:900;color:#eaf7ff}
 .table-wrap{overflow:auto;border-top:1px solid var(--line);max-height:560px}table{width:100%;border-collapse:collapse;min-width:980px}th{position:sticky;top:0;background:#0b1f36;color:#f0f8ff;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:12px;border-bottom:1px solid rgba(255,255,255,.14);z-index:2;white-space:nowrap}td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.065);font-size:13px;white-space:nowrap;vertical-align:middle}tr:hover{background:rgba(255,255,255,.045)}
 .player{font-weight:900;color:#fff;cursor:pointer;text-decoration:none}.player:hover{color:#bae6fd}
 .g-badge{display:inline-flex;align-items:center;justify-content:center;min-width:38px;min-height:24px;padding:0 9px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.04em;border:1px solid currentColor;background:rgba(255,255,255,.06)}
@@ -25,20 +31,51 @@ label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-trans
 .g-card .panel-head h3,.g-card .chip{color:var(--g-accent,var(--gunknown))}
 .g-card .chip{border-color:color-mix(in srgb,var(--g-accent,var(--gunknown)) 55%,transparent);background:color-mix(in srgb,var(--g-accent,var(--gunknown)) 16%,transparent)}
 .g-card.g9{--g-accent:var(--g9)}.g-card.g8{--g-accent:var(--g8)}.g-card.g7{--g-accent:var(--g7)}.g-card.g6{--g-accent:var(--g6)}.g-card.g5{--g-accent:var(--g5)}.g-card.g4{--g-accent:var(--g4)}.g-card.gunknown{--g-accent:var(--gunknown)}.badge{display:inline-flex;min-height:24px;align-items:center;justify-content:center;border-radius:999px;padding:0 9px;font-size:10px;font-weight:900;letter-spacing:.04em;border:1px solid transparent}.met,.active{color:#9ff0c7;background:rgba(56,217,150,.13);border-color:rgba(56,217,150,.25)}.returned{color:#d8c8ff;background:rgba(167,139,250,.15);border-color:rgba(167,139,250,.30)}.new{color:#a8ecff;background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.28)}.fail,.left{color:#ffb6c0;background:rgba(255,107,125,.13);border-color:rgba(255,107,125,.25)}.warnb{color:#ffe68a;background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.24)}.scheduled{color:#ffe68a;background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.24)}.expired{color:#cbd5e1;background:rgba(148,163,184,.14);border-color:rgba(148,163,184,.25)}
-.list{list-style:none;margin:0;padding:0}.list li{display:grid;grid-template-columns:minmax(0,1fr) 100px 110px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px}.empty{padding:22px;border:1px dashed var(--line);border-radius:18px;color:#d7ebff;background:rgba(255,255,255,.035);line-height:1.6}
+.list{list-style:none;margin:0;padding:0}.list li{display:grid;grid-template-columns:minmax(0,1fr) 100px 110px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px}.growth-metric-head,.growth-metric-list li{display:grid;grid-template-columns:minmax(0,1.35fr) 86px 142px 96px;gap:10px;align-items:center}
+.growth-metric-head{padding:2px 0 9px;border-bottom:1px solid rgba(255,255,255,.13);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.growth-metric-list{list-style:none;margin:0;padding:0}.growth-metric-list li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px}
+.growth-metric-list .gain{font-weight:800;text-align:right}.growth-metric-list .gpct{font-weight:900;text-align:right}.growth-metric-head span:nth-child(3),.growth-metric-head span:nth-child(4){text-align:right}
+@media(max-width:760px){.growth-metric-head,.growth-metric-list li{grid-template-columns:minmax(0,1fr) 68px 112px 82px;gap:7px}}.red-zone-card{border-color:rgba(255,107,125,.38);box-shadow:0 24px 70px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,107,125,.06)}
+.red-zone-card .panel-head h3{color:#ffb6c0}.red-zone-card .chip{color:#ffb6c0;border-color:rgba(255,107,125,.35);background:rgba(255,107,125,.10)}
+.red-zone-head,.red-zone-list li{display:grid;grid-template-columns:minmax(0,1fr) 72px 92px 92px;gap:8px;align-items:center}
+.red-zone-head{padding:2px 0 9px;border-bottom:1px solid rgba(255,255,255,.13);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.red-zone-list{list-style:none;margin:0;padding:0}.red-zone-list li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px}
+.red-zone-pct{color:#ffb6c0;font-weight:900}.red-zone-points{font-weight:800}
+.exempt-participated-row{background:linear-gradient(90deg,rgba(56,189,248,.10),transparent 72%);border-left:3px solid rgba(56,189,248,.75);padding-left:8px!important}
+.exempt-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;min-height:20px;padding:0 7px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.04em;color:#a8ecff;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.35);vertical-align:middle}
+.empty{padding:22px;border:1px dashed var(--line);border-radius:18px;color:#d7ebff;background:rgba(255,255,255,.035);line-height:1.6}
 .barwrap{display:flex;align-items:end;gap:10px;height:100%;padding:12px}.baritem{flex:1;min-width:36px;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;height:100%}.bar{border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,rgba(56,189,248,.85),rgba(167,139,250,.65));border:1px solid rgba(255,255,255,.18)}.barlabel{font-size:10px;color:#d7ebff;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tooltip{position:fixed;z-index:2000;display:none;pointer-events:none;max-width:260px;padding:10px 12px;border-radius:14px;border:1px solid rgba(148,197,253,.35);background:rgba(7,18,35,.96);box-shadow:0 18px 45px rgba(0,0,0,.45);color:#f7fbff;font-size:12px;line-height:1.45}.tooltip b{display:block;font-size:13px;margin-bottom:4px;color:#fff}.tooltip .muted{color:#b8d7f5}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,8,18,.78);backdrop-filter:blur(8px);z-index:999;padding:14px}.modal.show{display:flex}.modal-card{width:min(1320px,100%);max-height:94vh;overflow:hidden;border-radius:24px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(14,27,50,.985),rgba(8,18,36,.985));box-shadow:0 26px 80px rgba(0,0,0,.5)}.modal-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid rgba(255,255,255,.08)}.modal-title{font-size:26px}.modal-body{padding:16px 20px 20px;overflow:auto;max-height:calc(94vh - 88px)}.close{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;font-size:22px;font-weight:900;cursor:pointer}.profile-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}.profile-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.profile-tabs .tab{padding:8px 12px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,8,18,.78);backdrop-filter:blur(8px);z-index:999;padding:14px}.modal.show{display:flex}.modal-card{width:min(1320px,100%);max-height:94vh;overflow:hidden;border-radius:24px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(14,27,50,.985),rgba(8,18,36,.985));box-shadow:0 26px 80px rgba(0,0,0,.5)}.modal-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid rgba(255,255,255,.08)}.modal-title{font-size:26px}.modal-body{padding:16px 20px 20px;overflow:auto;max-height:calc(94vh - 88px)}.close{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;font-size:22px;font-weight:900;cursor:pointer}.profile-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}.profile-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.profile-tabs .tab{padding:8px 12px}
 .performance-score{display:inline-flex;align-items:center;justify-content:center;min-width:64px;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid currentColor;background:rgba(255,255,255,.06)}
 .performance-score.high{color:#9ff0c7}.performance-score.mid{color:#ffe68a}.performance-score.low{color:#ffb6c0}.performance-score.limited{color:#cbd5e1}
+.profile-grid .performance-score{white-space:normal;text-align:center;line-height:1.2;min-height:34px}
+.profile-grid .kpi .value:has(.performance-score){font-size:14px;letter-spacing:0}
 .matrix-cell{display:inline-flex;align-items:center;justify-content:center;min-width:58px;padding:4px 8px;border-radius:10px;font-size:11px;font-weight:900}
 .matrix-cell.met{color:#9ff0c7;background:rgba(56,217,150,.13)}.matrix-cell.fail{color:#ffb6c0;background:rgba(255,107,125,.13)}.matrix-cell.na{color:#cbd5e1;background:rgba(148,163,184,.12)}
-@media(max-width:1350px){.top{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-cards{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:repeat(4,1fr)}.intel-grid,.growth-intel-grid,.g-roster-grid,.dynamic-pack,.dynamic-pack.two-col{grid-template-columns:1fr}.profile-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}@media(max-width:760px){.wrap{width:min(100% - 10px,1780px)}.hero-cards,.kpis,.profile-grid{grid-template-columns:1fr}.searchbox{grid-template-columns:1fr}h1{font-size:34px}table{min-width:860px}}
+@media(max-width:1350px){.top{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-cards{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:repeat(4,1fr)}.intel-grid,.score-intel-grid,.growth-intel-grid,.g-roster-grid,.dynamic-pack,.dynamic-pack.two-col,.vault-menu{grid-template-columns:1fr}.profile-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}@media(max-width:760px){.wrap{width:min(100% - 10px,1780px)}.hero-cards,.kpis,.profile-grid{grid-template-columns:1fr}.searchbox{grid-template-columns:1fr}h1{font-size:34px}table{min-width:860px}}
+
+.back-to-top{
+  position:fixed;right:22px;bottom:22px;width:50px;height:50px;border-radius:50%;
+  border:1px solid rgba(148,197,253,.45);
+  background:linear-gradient(135deg,rgba(56,189,248,.88),rgba(167,139,250,.82));
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;line-height:1;
+  cursor:pointer;box-shadow:0 16px 40px rgba(0,0,0,.38);z-index:2500;opacity:0;visibility:hidden;
+  transform:translateY(10px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease,filter .2s ease;
+}
+.back-to-top.show{opacity:1;visibility:visible;transform:translateY(0)}
+.back-to-top:hover{filter:brightness(1.08)}
+.back-to-top:focus-visible{outline:3px solid rgba(186,230,253,.85);outline-offset:3px}
+@media(max-width:760px){.back-to-top{right:14px;bottom:14px;width:46px;height:46px;font-size:22px}}
+
 </style></head><body>
+<button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">↑</button>
+
 <div class="wrap"><section class="top glass"><div class="brand"><span class="dot"></span><span>WOA Live Intelligence Platform V9</span></div><div><label for="search">Player Search</label><div class="searchbox"><input class="input" id="search" list="suggestions" placeholder="Search player name..." autocomplete="off"><button class="btn" id="searchBtn">Search</button></div><datalist id="suggestions"></datalist><div class="msg" id="searchMsg">Connecting to the live WoA intelligence feed...</div></div><div><label for="eventSelect">Event / Week</label><select class="select" id="eventSelect"></select></div><div><label for="gFilter">G-Level</label><select class="select" id="gFilter"><option value="">All G-Levels</option></select></div></section><div id="warningBanner" class="warn-banner"></div><section class="hero glass"><div><div class="brand"><span class="dot"></span> Live Intelligence</div><h1>WoA Intelligence Platform</h1><p>Live monitoring of clan performance, participation and player development across every recorded event.</p></div><div class="hero-cards" id="heroCards"></div></section><section class="glass"><div class="tabs" id="tabs"></div></section><main id="app"></main></div>
 <div id="chartTooltip" class="tooltip"></div>
-<div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><div><h2 class="modal-title" id="modalTitle">Player Profile</h2><p class="sub" id="modalSub">Live player intelligence across all recorded events.</p></div><button class="close" id="closeModal">×</button></div><div class="modal-body"><div class="profile-grid" id="profileGrid"></div><div class="profile-tabs" id="profileTabs"></div><div id="profileContent"></div></div></div></div>
+<div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><div><h2 class="modal-title" id="modalTitle">Player Profile</h2><p class="sub" id="modalSub">Player performance and progression across recorded events.</p></div><button class="close" id="closeModal">×</button></div><div class="modal-body"><div class="profile-grid" id="profileGrid"></div><div class="profile-tabs" id="profileTabs"></div><div id="profileContent"></div></div></div></div>
 <script>
 /* WoA Live Intelligence Platform */
+/* Production layout: score events and Vaults use compact fixed intelligence columns; repeat-risk cards sit directly below consecutive-risk cards. */
 const CONFIG={
  settings:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR6W22ERb3UOEaYEoap6ykIoJXWfBOEfTLGh-mdJQ0uhfCYlrTj0MOKiN78rvs3avmT_IN7uTqVi2Iz/pub?gid=332629248&single=true&output=csv',
  members:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR6W22ERb3UOEaYEoap6ykIoJXWfBOEfTLGh-mdJQ0uhfCYlrTj0MOKiN78rvs3avmT_IN7uTqVi2Iz/pub?gid=2078620130&single=true&output=csv',
@@ -57,7 +94,7 @@ const GROWTH_FALLBACK=[{"Week":"2026-03-06","Player":"Adonai","Might":219867075}
 const LIVE_STATUS={};
 function parseCSVMatrix(text){const rows=[];let row=[],cur='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cur+='"';i++}else if(c==='"'){q=!q}else if(c===','&&!q){row.push(cur);cur=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);row=[];cur=''}else cur+=c}row.push(cur);if(row.some(x=>clean(x)!==''))rows.push(row);return rows}
 function canonicalHeader(s){return clean(s).toLowerCase().replace(/[^a-z0-9]+/g,' ')}
-function headerScore(row){const joined=row.map(canonicalHeader).join('|');const tokens=['player','player name','official player name','player id','event id','event date','current g level','g level','vault level','result score','score','points','target','rank','current status','current might','might','week'];return tokens.reduce((a,t)=>a+(joined.includes(t)?1:0),0)}
+function headerScore(row){const joined=row.map(canonicalHeader).join('|');const tokens=['player','player name','official player name','player id','event id','event date','current g level','g level','hero level','vault level','result score','score','points','target','rank','current status','current might','might','week','duplicate check'];return tokens.reduce((a,t)=>a+(joined.includes(t)?1:0),0)}
 function rowsToObjects(matrix,name=''){
  if(!matrix||!matrix.length)return[];
  if(name==='eventExemptions'){
@@ -77,21 +114,91 @@ function rowsToObjects(matrix,name=''){
  let best=0,score=-1;
  for(let i=0;i<Math.min(30,matrix.length);i++){let can=matrix[i].map(canonicalHeader);let sc=headerScore(matrix[i]);if(name==='growth'&&can.includes('week')&&can.includes('player')&&can.includes('might'))sc+=100;if(sc>score){score=sc;best=i}}
  let headers=matrix[best].map(h=>clean(h)||'Column');
- if(name==='growth'){const can=headers.map(canonicalHeader);if(!(can.includes('week')&&can.includes('player')&&can.includes('might'))){headers=['Week','Player','Might','Duplicate Check'];best=matrix.findIndex(r=>canonicalHeader(r[0]).includes('week')&&canonicalHeader(r[1]).includes('player'));if(best<0)best=0}}
+ if(name==='growth'){const can=headers.map(canonicalHeader);if(!(can.includes('week')&&can.includes('player')&&can.includes('might'))){headers=['Week','Player','Might','G-Level','Hero Level','Duplicate Check'];best=matrix.findIndex(r=>canonicalHeader(r[0]).includes('week')&&canonicalHeader(r[1]).includes('player'));if(best<0)best=0}}
  return matrix.slice(best+1).map(r=>Object.fromEntries(headers.map((h,i)=>[h,normalizeCell(r[i])]))).filter(o=>Object.values(o).some(v=>clean(v)!==''))
 }
 function normalizeCell(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);let s=clean(v);let m=s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})\)$/);if(m){let d=new Date(+m[1],+m[2],+m[3]);return d.toISOString().slice(0,10)}return s}
 function sheetMeta(url){const gid=(url.match(/[?&]gid=(\d+)/)||[])[1]||'0';const pub=(url.match(/\/d\/e\/([^/]+)\//)||[])[1];return{pub,gid}}
 function loadGvizMatrix(name,url){return new Promise(resolve=>{const m=sheetMeta(url);if(!m.pub)return resolve([]);const cb='__woa_live_'+name.replace(/\W/g,'_')+'_'+Date.now();let done=false,script=null;const finish=(rows)=>{if(done)return;done=true;try{delete window[cb]}catch(e){};if(script&&script.parentNode)script.parentNode.removeChild(script);resolve(rows||[])};window[cb]=(resp)=>{try{const matrix=(resp.table.rows||[]).map(r=>(r.c||[]).map(c=>c?(c.f??c.v??''):''));finish(rowsToObjects(matrix,name))}catch(e){console.warn('GViz parse failed',name,e);finish([])}};script=document.createElement('script');script.onerror=()=>finish([]);script.src=`https://docs.google.com/spreadsheets/d/e/${m.pub}/gviz/tq?gid=${m.gid}&headers=0&tqx=out:json;responseHandler:${cb}`;document.body.appendChild(script);setTimeout(()=>finish([]),15000)})}
-async function loadSheet(name,url){LIVE_STATUS[name]={status:'Loading',rows:0,error:''};try{const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),10000);const res=await fetch(url+'&cacheBust='+Date.now(),{cache:'no-store',signal:ctrl.signal});clearTimeout(t);if(res.ok){const txt=await res.text();if(!/^\s*</.test(txt)){const rows=rowsToObjects(parseCSVMatrix(txt),name);if(rows.length){LIVE_STATUS[name]={status:'Loaded',rows:rows.length,error:''};return rows}}}}catch(e){LIVE_STATUS[name]={status:'CSV failed',rows:0,error:e.message}}const rows=await loadGvizMatrix(name,url);LIVE_STATUS[name]=rows.length?{status:'Loaded',rows:rows.length,error:''}:{status:'Empty/Failed',rows:0,error:'No usable rows returned'};return rows}
+async function loadSheet(name,url){
+ LIVE_STATUS[name]={status:'Loading',rows:0,error:'',source:'',attempts:0};
+
+ let sawConnectionFailure=false;
+ let lastError='';
+ let sawReachableResponse=false;
+
+ // Stage 1: published CSV, with one retry.
+ for(let attempt=1;attempt<=2;attempt++){
+  LIVE_STATUS[name].attempts++;
+  try{
+   const ctrl=new AbortController();
+   const t=setTimeout(()=>ctrl.abort(),10000);
+   const sep=url.includes('?')?'&':'?';
+   const res=await fetch(url+sep+'cacheBust='+Date.now()+'_'+attempt,{cache:'no-store',signal:ctrl.signal});
+   clearTimeout(t);
+
+   if(!res.ok){
+    sawConnectionFailure=true;
+    lastError='CSV HTTP '+res.status;
+   }else{
+    sawReachableResponse=true;
+    const txt=await res.text();
+    if(/^\s*</.test(txt)){
+     lastError='CSV returned HTML instead of data';
+    }else{
+     const rows=rowsToObjects(parseCSVMatrix(txt),name);
+     if(rows.length){
+      LIVE_STATUS[name]={status:'Live',rows:rows.length,error:'',source:'CSV',attempts:LIVE_STATUS[name].attempts};
+      return rows;
+     }
+     lastError='CSV connected but returned no usable rows';
+    }
+   }
+  }catch(e){
+   sawConnectionFailure=true;
+   lastError=e&&e.name==='AbortError'?'CSV request timed out':(e?.message||'CSV request failed');
+  }
+
+  if(attempt<2)await new Promise(r=>setTimeout(r,350));
+ }
+
+ // Stage 2: GViz fallback, also retried once.
+ for(let attempt=1;attempt<=2;attempt++){
+  LIVE_STATUS[name].attempts++;
+  try{
+   const rows=await loadGvizMatrix(name,url);
+   if(rows.length){
+    LIVE_STATUS[name]={status:'Live',rows:rows.length,error:'',source:'GViz',attempts:LIVE_STATUS[name].attempts};
+    return rows;
+   }
+   sawReachableResponse=true;
+   lastError='GViz returned no usable rows';
+  }catch(e){
+   sawConnectionFailure=true;
+   lastError=e?.message||'GViz request failed';
+  }
+
+  if(attempt<2)await new Promise(r=>setTimeout(r,350));
+ }
+
+ // Distinguish connectivity failure from an empty/invalid data condition.
+ LIVE_STATUS[name]={
+  status:sawConnectionFailure&&!sawReachableResponse?'Connection Failed':'Empty/Invalid',
+  rows:0,
+  error:lastError||'No usable rows returned',
+  source:'',
+  attempts:LIVE_STATUS[name].attempts
+ };
+ return [];
+}
 function mapMember(r){return{_id:field(r,['Player ID','ID']),_name:field(r,['Official Player Name','Player Name','Name','Player']),_g:field(r,['Current G-Level','G-Level','G Level']),_vault:num(field(r,['Current Vault Level','Vault Level'])),_might:num(field(r,['Current Might','Might'])),_status:field(r,['Current Status','Status'])||'Active',_join:field(r,['Join Date','Date Joined']),_left:field(r,['Date Left','Left Date'])}}
 function mapEventRow(r){return{_eventId:field(r,['Event ID','EventID']),_event:field(r,['Event Date','Date','Week']),_available:num(field(r,['Available Members','Eligible Members'])),_rank:num(field(r,['Rank'])),_name:field(r,['Player Name','Official Player Name','Name','Player']),_id:field(r,['Player ID','ID']),_g:field(r,['G-Level','G Level','Current G-Level']),_vault:num(field(r,['Vault Level','Current Vault Level'])),_might:num(field(r,['Current Might','Might'])),_target:num(field(r,['Target','Required','Minimum'])),_score:num(field(r,['Result / Score','Score','Points','Essence','Result','Value'])),_status:field(r,['Result Status','Status','Current Status']),_buildTime:field(r,['Local Build Time','Build Time']),_resetOffset:field(r,['Reset Offset']),_utcOffset:field(r,['UTC Offset']),_chests:num(field(r,['Chests','Chest Count']))}}
 function mapEventSetup(r){return{_id:field(r,['Event ID','EventID']),_name:field(r,['Event Name','Name']),_type:field(r,['Event Type','Type']),_date:field(r,['Event Date','Date']),_target:num(field(r,['Target','Default Target'])),_available:num(field(r,['Available Members','Eligible Members']))}}
 function normalizeWeek(v){v=clean(v);if(!v)return'';let d=parseAnyDate(v);if(d&&!isNaN(d))return d.toISOString().slice(0,10);return v}
-function mapGrowth(r){return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_week:normalizeWeek(field(r,['Week','Week Start','Event Date','Date'])),_might:num(field(r,['Current Might','Might','Total Might'])),_g:field(r,['G-Level','G Level','Current G-Level'])}}
+function mapGrowth(r){return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_week:normalizeWeek(field(r,['Week','Week Start','Event Date','Date'])),_might:num(field(r,['Current Might','Might','Total Might'])),_g:field(r,['G-Level','G Level','Current G-Level']),_hero:num(field(r,['Hero Level','Hero','Current Hero Level'])),_duplicate:field(r,['Duplicate Check','Duplicate','Duplicate Status'])}}
 function mapStatusHistory(r){const ev=field(r,['Event Date','Date','Week']); return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_event:ev,_eventId:field(r,['Event ID','EventID']),_eventName:field(r,['Event Name','Name','Event']),_g:field(r,['G-Level','G Level','Current G-Level']),_target:num(field(r,['Target','Required','Minimum'])),_score:num(field(r,['Result / Score','Score','Points','Essence','Result','Value'])),_status:field(r,['Status','Current Status','Result Status'])}}
 function mapEventExemption(r){return{_eventId:field(r,['Event ID','EventID','Event Id']),_event:field(r,['Event Date','Date','Week']),_eventName:field(r,['Event Name','Name','Event','Event Type']),_id:field(r,['Player ID','ID','Player Id']),_name:field(r,['Player Name','Official Player Name','Name','Player']),_reason:field(r,['Reason','Exemption Reason','Notes','Comment']),_fromDate:field(r,['From Date','Start Date','Date From','Exemption From']),_toDate:field(r,['To Date','End Date','Date To','Exemption To']),_status:field(r,['Status','Exemption Status','Current Status'])||'Active'}}
-async function initLive(){try{document.getElementById('searchMsg').textContent='Connecting to the live WoA intelligence feed...';document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Starting Live Intelligence</h2><p class="sub">Connecting to the live WoA Master Workbook and recalculating intelligence.</p></section>';const raw={};await Promise.all(Object.entries(CONFIG).map(async([k,u])=>{raw[k]=await loadSheet(k,u)}));let liveGrowth=(raw.growth||[]);if(!liveGrowth.length&&Array.isArray(GROWTH_FALLBACK)&&GROWTH_FALLBACK.length){liveGrowth=GROWTH_FALLBACK;LIVE_STATUS.growth={status:'Loaded from workbook fallback',rows:liveGrowth.length,error:'Live Growth sheet returned no rows; using embedded workbook snapshot.'}}state.data={settings:raw.settings||[],members:(raw.members||[]).map(mapMember).filter(r=>r._name),eventSetup:(raw.eventSetup||[]).map(mapEventSetup).filter(r=>r._id||r._name),growthRaw:liveGrowth.map(mapGrowth).filter(r=>r._name&&r._week&&r._might>0),tinman:(raw.tinman||[]).map(mapEventRow).filter(r=>r._name),darkOmens:(raw.darkOmens||[]).map(mapEventRow).filter(r=>r._name),trials:(raw.trials||[]).map(mapEventRow).filter(r=>r._name),ragnarok:(raw.ragnarok||[]).map(mapEventRow).filter(r=>r._name),chestpoints:(raw.chestpoints||[]).map(mapEventRow).filter(r=>r._name),vaults:(raw.vaults||[]).map(mapEventRow).filter(r=>r._name),playerStatusHistory:(raw.playerStatusHistory||[]).map(mapStatusHistory).filter(r=>r._name),eventExemptions:(raw.eventExemptions||[]).map(mapEventExemption).filter(r=>(r._id||r._name)&&r._reason)};setupControls();renderAll();enableAutomaticLayout();updateHealthWarnings();document.getElementById('searchMsg').textContent='Live intelligence synchronized. Rankings and insights are current.'}catch(e){document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Startup Error</h2><p class="sub">'+esc(e.message)+'</p></section>';console.error(e)}}
+async function initLive(){try{document.getElementById('searchMsg').textContent='Connecting to the live WoA intelligence feed...';document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Starting Live Intelligence</h2><p class="sub">Preparing current WoA intelligence.</p></section>';const raw={};await Promise.all(Object.entries(CONFIG).map(async([k,u])=>{raw[k]=await loadSheet(k,u)}));let liveGrowth=(raw.growth||[]);if(!liveGrowth.length&&Array.isArray(GROWTH_FALLBACK)&&GROWTH_FALLBACK.length){liveGrowth=GROWTH_FALLBACK;LIVE_STATUS.growth={status:'Fallback Active',rows:liveGrowth.length,error:'Live Growth source unavailable; using embedded workbook snapshot.',source:'Workbook Fallback',attempts:LIVE_STATUS.growth?.attempts||0}}state.data={settings:raw.settings||[],members:(raw.members||[]).map(mapMember).filter(r=>r._name),eventSetup:(raw.eventSetup||[]).map(mapEventSetup).filter(r=>r._id||r._name),growthRaw:liveGrowth.map(mapGrowth).filter(r=>r._name&&r._week&&r._might>0),tinman:(raw.tinman||[]).map(mapEventRow).filter(r=>r._name),darkOmens:(raw.darkOmens||[]).map(mapEventRow).filter(r=>r._name),trials:(raw.trials||[]).map(mapEventRow).filter(r=>r._name),ragnarok:(raw.ragnarok||[]).map(mapEventRow).filter(r=>r._name),chestpoints:(raw.chestpoints||[]).map(mapEventRow).filter(r=>r._name),vaults:(raw.vaults||[]).map(mapEventRow).filter(r=>r._name),playerStatusHistory:(raw.playerStatusHistory||[]).map(mapStatusHistory).filter(r=>r._name),eventExemptions:(raw.eventExemptions||[]).map(mapEventExemption).filter(r=>(r._id||r._name)&&r._reason)};setupControls();renderAll();enableAutomaticLayout();updateHealthWarnings();document.getElementById('searchMsg').textContent=Object.values(LIVE_STATUS).some(v=>v&&v.status==='Fallback Active')?'Intelligence loaded. Some data is using an approved fallback snapshot.':'Live intelligence synchronized. Rankings and insights are current.'}catch(e){document.getElementById('app').innerHTML='<section class="content-head glass"><h2>Startup Error</h2><p class="sub">'+esc(e.message)+'</p></section>';console.error(e)}}
 const MODULES=[['overview','🏠 Overview'],['growth','📈 Growth'],['consolidated','🏆 Consolidated Performance'],['tinman','⚔ Tinman'],['darkOmens','🌑 Dark Omens'],['trials','🏛 Trials'],['ragnarok','🪓 Ragnarök'],['chestpoints','🎯 Chest Points'],['vaults','🏰 Vaults'],['exemptions','🛡 Exemptions']];
 const state={module:'overview',selected:'',g:'',profileTab:'summary',player:'',data:{}};
 const $=id=>document.getElementById(id); const clean=s=>(s??'').toString().trim(); const key=s=>clean(s).toUpperCase().replace(/\s+/g,''); const num=v=>{let n=parseFloat(clean(v).replace(/,/g,''));return isNaN(n)?0:n}; const fmt=n=>Number(num(n)||0).toLocaleString(); const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0%'; const short=n=>{n=num(n); if(Math.abs(n)>=1e9)return(n/1e9).toFixed(2)+'B'; if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+'M'; if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+'K'; return fmt(n)}; const esc=s=>clean(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); const escAttr=s=>esc(s).replace(/'/g,'&#39;');
@@ -100,7 +207,7 @@ const gColor=g=>({G9:'var(--g9)',G8:'var(--g8)',G7:'var(--g7)',G6:'var(--g6)',G5
 const gBadge=g=>{const v=clean(g)||'Unknown';return `<span class="g-badge ${gClass(v)}">${esc(v)}</span>`};
 const field=(o,names)=>{if(!o)return'';for(const n of names){if(Object.prototype.hasOwnProperty.call(o,n)&&clean(o[n])!=='')return clean(o[n])}const idx=Object.fromEntries(Object.keys(o).map(k=>[canonicalHeader(k),k]));for(const n of names){const k=idx[canonicalHeader(n)];if(k&&clean(o[k])!=='')return clean(o[k])}return ''}; const statusBadge=s=>{s=clean(s)||'-'; let cls=/expired/i.test(s)?'expired':/scheduled/i.test(s)?'scheduled':/returned/i.test(s)?'returned':/^new/i.test(s)?'new':/met|active/i.test(s)?'met':/left|below|fail|missing/i.test(s)?'fail':/pending|inactive/i.test(s)?'warnb':'warnb'; return `<span class="badge ${cls}">${esc(s)}</span>`}; const pLink=n=>`<a class="player" onclick="openProfile('${escAttr(n)}')">${esc(n)}</a>`;
 function normalize(){return state.data}
-function activeMembers(){return state.data.members.filter(m=>!/(left|removed)/i.test(m._status))} function memberByName(n){const k=key(n);return state.data.members.find(m=>key(m._name)===k)||state.data.members.find(m=>key(m._name).includes(k))} function memberById(id){const k=key(id);return k?state.data.members.find(m=>key(m._id)===k):null} function memberG(n){return memberByName(n)?._g||''} function filteredRows(rows){return state.g?rows.filter(r=>(r._g||memberG(r._name))===state.g):rows} function selectedRows(rows){let r=filteredRows(rows);if(state.selected)r=r.filter(x=>x._eventId===state.selected||x._event===state.selected||x._week===state.selected);return r} function eventMeta(id){return state.data.eventSetup.find(e=>e._id===id)||{}}
+function activeMembers(){return state.data.members.filter(m=>memberIsActiveForDate(m._name,todayDate()))} function memberByName(n){const k=key(n);return state.data.members.find(m=>key(m._name)===k)} function memberById(id){const k=key(id);return k?state.data.members.find(m=>key(m._id)===k):null} function memberG(n){return memberByName(n)?._g||''} function filteredRows(rows){return state.g?rows.filter(r=>(r._g||memberG(r._name))===state.g):rows} function selectedRows(rows){let r=filteredRows(rows);if(state.selected)r=r.filter(x=>x._eventId===state.selected||x._event===state.selected||x._week===state.selected);return r} function eventMeta(id){return state.data.eventSetup.find(e=>e._id===id)||{}}
 function startOfDay(d){if(!(d instanceof Date)||isNaN(d))return null;return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
 function todayDate(){return startOfDay(new Date())}
 function eventDateForExemption(x){const meta=clean(x?._eventId)?eventMeta(x._eventId):{};return startOfDay(parseAnyDate(meta._date)||parseAnyDate(x?._event)||parseAnyDate(x?._fromDate))}
@@ -173,8 +280,34 @@ function outstandingEventEntries(eventId,enteredRows,members,dataset='',eventDat
   return !(exempt&&!participated)&&!participated;
  });
 }
-function kpiHtml(items){return items.map((x,i)=>`<div class="kpi ${['info','good','purple','warn','bad'][i%5]}"><div class="label">${esc(x[0])}</div><div class="value">${x[1]}</div><div class="note">${x[2]||''}</div></div>`).join('')} function card(title,sub,body,chip='',extraClass=''){return `<section class="glass ${extraClass||''}"><div class="panel-head"><div><h3>${title}</h3><p class="sub">${sub||''}</p></div>${chip?`<span class="chip">${chip}</span>`:''}</div><div class="panel-body">${body}</div></section>`} function tableCard(title,rows,headers,map,sub='Live detailed performance records.'){const body=rows.length?`<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${map(r,i).map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="empty">No records found.</div>`;return card(title,sub,body,`${rows.length} rows`)}
-function listCard(title,rows,chip,sub='Live leadership focus for the current selection.'){return card(title,sub,rows.length?`<ul class="list">${rows.map(r=>`<li><span>${pLink(r._name)}</span><span>${gBadge(r._g||memberG(r._name)||'')}</span><span>${fmt(r._score??r._change??r._growth??r._value??0)}</span></li>`).join('')}</ul>`:`<div class="empty">No records.</div>`,chip)}
+function kpiHtml(items){return items.map((x,i)=>`<div class="kpi ${['info','good','purple','warn','bad'][i%5]}"><div class="label">${esc(x[0])}</div><div class="value">${x[1]}</div><div class="note">${x[2]||''}</div></div>`).join('')} function card(title,sub,body,chip='',extraClass=''){return `<section class="glass ${extraClass||''}"><div class="panel-head"><div><h3>${title}</h3><p class="sub">${sub||''}</p></div>${chip?`<span class="chip">${chip}</span>`:''}</div><div class="panel-body">${body}</div></section>`} function tableCard(title,rows,headers,map,sub='Detailed performance results for the current selection.'){const body=rows.length?`<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${map(r,i).map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="empty">No records found.</div>`;return card(title,sub,body,`${rows.length} rows`)}
+function listCard(title,rows,chip,sub='Current player performance focus.'){return card(title,sub,rows.length?`<ul class="list">${rows.map(r=>`<li><span>${pLink(r._name)}</span><span>${gBadge(r._g||memberG(r._name)||'')}</span><span>${fmt(r._score??r._change??r._growth??r._value??0)}</span></li>`).join('')}</ul>`:`<div class="empty">No records.</div>`,chip)}
+function exemptBelowTarget(eventId,row,eventDate){
+ return !!(row&&row._target>0&&row._score<row._target&&rowHasParticipation(state.module,row)&&rowIsExempt(eventId,row,eventDate));
+}
+function exemptAwarePlayerName(eventId,row,eventDate){
+ const flagged=exemptBelowTarget(eventId,row,eventDate);
+ return pLink(row._name)+(flagged?'<span class="exempt-badge">EXEMPT</span>':'');
+}
+function exemptAwareListCard(title,rows,chip,sub,eventId,eventDate){
+ return card(title,sub,rows.length?`<ul class="list">${rows.map(r=>{
+  const flagged=exemptBelowTarget(eventId,r,eventDate);
+  return `<li class="${flagged?'exempt-participated-row':''}"><span>${exemptAwarePlayerName(eventId,r,eventDate)}</span><span>${gBadge(r._g||memberG(r._name)||'')}</span><span>${fmt(r._score??r._change??r._growth??r._value??0)}</span></li>`;
+ }).join('')}</ul>`:`<div class="empty">No records.</div>`,chip);
+}
+function redZoneCard(rows,eventId,eventDate){
+
+ return card(
+  '🔴 Red Zone Players',
+  'Players achieving 80% or less of the required target. Exempt participation is highlighted in blue.',
+  rows.length?`<div class="red-zone-head"><span>Player</span><span>G-Level</span><span>Points</span><span>Achievement</span></div><ul class="red-zone-list">${rows.map(r=>{
+   const achievement=r._target>0?(r._score/r._target)*100:0;
+   const flagged=exemptBelowTarget(eventId,r,eventDate);
+   return `<li class="${flagged?'exempt-participated-row':''}"><span>${exemptAwarePlayerName(eventId,r,eventDate)}</span><span>${gBadge(r._g||memberG(r._name)||'')}</span><span class="red-zone-points">${fmt(r._score)}</span><span class="red-zone-pct">${achievement.toFixed(1)}%</span></li>`;
+  }).join('')}</ul>`:`<div class="empty">No players are currently at or below 80% of target.</div>`,
+  '≤80% Achievement'
+ ).replace('class="glass"','class="glass red-zone-card"');
+}
 function groupCount(rows,prop){const o={};rows.forEach(r=>{const k=clean(r[prop])||'Unknown';o[k]=(o[k]||0)+1});return o} function groupSum(rows,prop,val){const o={};rows.forEach(r=>{const k=clean(r[prop])||'Unknown';o[k]=(o[k]||0)+num(r[val])});return o} function topObj(rows,labelProp,valProp,n=10){return Object.fromEntries(rows.map(r=>[r[labelProp],num(r[valProp])]).filter(x=>x[0]).sort((a,b)=>b[1]-a[1]).slice(0,n))} function allTimeGrowthRows(){const by={};(state.data.growthRaw||[]).forEach(r=>{const kk=key(r._name); if(!kk||!r._week)return; by[kk]=by[kk]||{_name:r._name,_g:memberG(r._name),_firstWeek:r._week,_lastWeek:r._week,_first:r._might,_last:r._might,_growth:0}; if(String(r._week).localeCompare(String(by[kk]._firstWeek))<0){by[kk]._firstWeek=r._week;by[kk]._first=r._might} if(String(r._week).localeCompare(String(by[kk]._lastWeek))>0){by[kk]._lastWeek=r._week;by[kk]._last=r._might}}); return Object.values(by).map(x=>({...x,_growth:x._last-x._first})).filter(x=>x._firstWeek!==x._lastWeek)} function eventTrend(rows){const o={};rows.forEach(r=>{const k=r._event;if(k)o[k]=(o[k]||0)+1});return o} function growthTrend(){const o={};(state.data.growthRaw||[]).forEach(r=>{o[r._week]=(o[r._week]||0)+r._might});return o}
 function chartBar(id,obj){const host=$(id);if(!host)return;const e=Object.entries(obj).filter(x=>x[1]!==undefined).slice(0,12);if(!e.length){host.innerHTML='<div class="empty">No data available.</div>';return}const max=Math.max(...e.map(x=>Math.abs(num(x[1]))),1);host.innerHTML=`<div class="barwrap">${e.map(([l,v])=>`<div class="baritem" data-title="${escAttr(l)}" data-value="${fmt(v)}"><div class="bar" style="height:${Math.max(4,Math.abs(num(v))/max*82)}%;${/^G[4-9]$/i.test(clean(l))?`background:${gColor(l)};box-shadow:0 0 18px color-mix(in srgb,${gColor(l)} 35%,transparent);`:''}"></div><div class="barlabel">${esc(l)}</div></div>`).join('')}</div>`;host.querySelectorAll('.baritem').forEach(el=>{el.onmousemove=e=>showTip(tipHtml(el.dataset.title,[['Value',el.dataset.value]]),e.clientX,e.clientY);el.onmouseleave=hideTip})} 
 function chartBarPercent(id,obj,metricLabel='Target Achievement'){
@@ -210,39 +343,33 @@ function growthWeeks(){return [...new Set((state.data.growthRaw||[]).map(r=>r._w
 function latestGrowthWeek(){const w=growthWeeks();return w.length?w[w.length-1]:''}
 function latestGrowthRows(){const w=latestGrowthWeek();return w?(state.data.growthRaw||[]).filter(r=>r._week===w):[]}
 function isActiveGrowthPlayer(r){const m=memberByName(r._name);return !m || !/(left|removed|inactive|pending)/i.test(m._status)}
-function latestGrowthSnapshot(){return latestGrowthRows().filter(isActiveGrowthPlayer).map(r=>{const m=memberByName(r._name)||{};return {...r,_g:m._g||memberG(r._name),_vault:m._vault||0,_status:m._status||'Active'}})}
+function latestGrowthSnapshot(){return latestGrowthRows().filter(isActiveGrowthPlayer).map(r=>{const m=memberByName(r._name)||{};return {...r,_g:r._g||m._g||memberG(r._name),_hero:num(r._hero),_status:m._status||'Active'}})}
 function latestGrowthTotal(){const snap=latestGrowthSnapshot();return snap.length?snap.reduce((s,r)=>s+r._might,0):activeRosterMembers().reduce((s,m)=>s+m._might,0)}
 function renderHero(){const current=activeRosterMembers(),active=activeMembers(),total=latestGrowthTotal(),weeks=growthWeeks();$('heroCards').innerHTML=kpiHtml([['Current Members',current.length],['Active Players',active.length],['Clan Might',short(total)],['Growth Weeks',weeks.length]])}
 
 function memberIsActiveForDate(name,eventDate){
  const m=memberByName(name);
  if(!m)return true;
-
+ const status=clean(m._status);
  const join=startOfDay(parseAnyDate(m._join));
  const left=startOfDay(parseAnyDate(m._left));
- const date=startOfDay(eventDate instanceof Date?eventDate:parseAnyDate(eventDate));
-
- // Current view: only currently eligible members.
- if(!date)return !/(left|removed|inactive|pending)/i.test(clean(m._status));
-
- // Historical view: membership is determined by the actual join/leave period.
- // A player is included from Join Date through Leave Date, inclusive.
+ const date=startOfDay(eventDate instanceof Date?eventDate:parseAnyDate(eventDate))||todayDate();
+ if(/inactive|pending/i.test(status))return false;
  if(join&&date.getTime()<join.getTime())return false;
- if(left&&date.getTime()>left.getTime())return false;
-
- // A status without a usable departure date cannot safely be projected backwards.
- if(!left&&/(left|removed)/i.test(clean(m._status)))return false;
- if(/pending/i.test(clean(m._status)))return false;
-
+ // Departure is effective on Date Left: only events strictly before that date count.
+ if(left&&date.getTime()>=left.getTime())return false;
+ if(!left&&/(left|removed)/i.test(status))return false;
  return true;
 }
+function heroTrackingActive(week){return !!week&&String(week).localeCompare('2026-08-01')>=0}
+function heroLevelText(r){return heroTrackingActive(r?._week)&&num(r?._hero)>0?fmt(r._hero):'—'}
 function growthRowsForWeek(week){return state.data.growthRaw.filter(r=>r._week===week)}
 function getPlayerGrowthTotal(name){const rows=(state.data.growthRaw||[]).filter(r=>key(r._name)===key(name)&&r._week).sort((a,b)=>String(a._week).localeCompare(String(b._week))); if(rows.length>1)return rows[rows.length-1]._might-rows[0]._might; return null}
 function playerTimeline(name){const kk=key(name), out=[]; const add=(r, event, scoreLabel)=>{out.push({_date:r._event,_event:event,_g:r._g||memberG(r._name),_target:r._target,_score:r._score,_status:r._status||((r._score>=r._target)?'Met Target':'Below Target'),_type:'score',_label:scoreLabel})};
  (state.data.tinman||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('tinman',r)).forEach(r=>add(r,'Tinman','Points'));
  (state.data.darkOmens||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('darkOmens',r)).forEach(r=>add(r,'Dark Omens','Essence'));
  (state.data.trials||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('trials',r)).forEach(r=>add(r,'Trials of Olympus','Score'));
- (state.data.ragnarok||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('ragnarok',r)).forEach(r=>add(r,'Ragnarök','Score'));
+ (state.data.ragnarok||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('ragnarok',r)).forEach(r=>out.push({_date:r._event,_event:'Ragnarök',_g:r._g||memberG(r._name),_target:0,_score:r._score,_status:'Participated',_type:'ragnarok',_label:'Score'}));
  (state.data.chestpoints||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('chestpoints',r)).forEach(r=>add(r,'Chest Points','Points'));
  (state.data.vaults||[]).filter(r=>key(r._name)===kk&&rowHasParticipation('vaults',r)).forEach(r=>out.push({_date:r._event,_event:'Vault',_g:r._g||memberG(r._name),_vault:r._vault,_status:'Built',_type:'vault'}));
  return out.filter(x=>x._date).sort((a,b)=>String(b._date).localeCompare(String(a._date)))}
@@ -251,35 +378,46 @@ function hideTip(){const t=$('chartTooltip'); if(t)t.style.display='none'}
 function tipHtml(title, rows){return `<b>${esc(title)}</b>`+rows.map(r=>`<div><span class="muted">${esc(r[0])}:</span> ${esc(r[1])}</div>`).join('')}
 
 const EXEC_COPY={
- overview:'Live clan status, roster strength and performance intelligence.',
- growth:'Live growth intelligence highlighting momentum, movement and players needing attention.',
- consolidated:'Live leadership intelligence identifying consistent performers and recurring performance risks across all eligible events.',
- tinman:'Live Tinman participation, target achievement and player performance intelligence.',
- darkOmens:'Live Dark Omens participation and essence performance intelligence.',
- trials:'Live Trials participation, target achievement and player rankings.',
- ragnarok:'Live Ragnarök participation and battle-performance intelligence.',
- chestpoints:'Live Chest Points contribution and participation intelligence.',
- vaults:'Live vault-building participation and compliance intelligence.',
- exemptions:'Live leadership view of active, scheduled and historical exemptions across all events.',
- nonBuilders:'Players yet to build a vault for the selected event.',
- mostVaults:'Players with the highest number of vaults built across all recorded events.',
- repeatVaultRisk:'Players who missed two or more eligible vault events while they were clan members. Join dates, departure dates and exemptions are enforced.',
- development:'Players needing improvement based on recent growth.',
- improvers:'Players with the highest growth during the selected period.',
- decliners:'Players with the largest growth decline during the selected period.',
- underperformers:'Every eligible non-exempt player below the required event target, ranked worst percentage achieved first.',
- outstanding:'Eligible players not yet entered for the selected event, excluding exemptions.',
- topPerformers:'Top performers for the selected event.',
- repeatRisk:'Players below target in multiple events.'
+ overview:'Current clan strength, roster status and performance overview.',
+ growth:'Clan growth, roster movement and development priorities.',
+ consolidated:'Cross-event performance consistency and recurring player risk.',
+ tinman:'Tinman participation, target achievement and player performance.',
+ darkOmens:'Dark Omens participation, target achievement and essence performance.',
+ trials:'Trials of Olympus participation, target achievement and player performance.',
+ ragnarok:'Ragnarök participation, mandatory attendance and battle performance.',
+ chestpoints:'Chest Points contribution, target achievement and participation.',
+ vaults:'Vault participation, completion and builder compliance.',
+ exemptions:'Player exemption coverage and status across all events.',
+ nonBuilders:'Eligible players who have not built a vault for the selected event.',
+ mostVaults:'Players with the highest vault-build totals across recorded events.',
+ repeatVaultRisk:'Players with two or more eligible vault misses across recorded events.',
+ development:'Players currently requiring development attention.',
+ improvers:'Players recording the strongest growth in the selected period.',
+ decliners:'Players recording the weakest growth in the selected period.',
+ underperformers:'Eligible players below the required target for the selected event.',
+ outstanding:'Eligible players with no recorded result for the selected event.',
+ topPerformers:'Highest-performing players in the selected event.',
+ repeatRisk:'Players below target in two or more eligible events.',
+ consecutiveRisk:'Players currently below target across three or more consecutive eligible events.'
 };
-function activeRosterMembers(){return state.data.members.filter(m=>!/(left|removed|inactive|pending)/i.test(m._status))}
-function isCurrentEligibleMember(m){return m&&!/(left|removed|inactive|pending)/i.test(m._status)}
-function renderOverview(){const a=activeRosterMembers(),members=state.data.members,snap=latestGrowthSnapshot(),roster=snap.length?snap:a.map(m=>({_name:m._name,_g:m._g,_vault:m._vault,_status:m._status,_might:m._might})),total=latestGrowthTotal(),avg=roster.length?total/roster.length:0,high=Math.max(0,...roster.map(m=>m._might)),low=Math.min(...roster.map(m=>m._might).filter(v=>num(v)>0)),latest=latestGrowthWeek();$('app').innerHTML=`<section class="content-head glass"><h2>Overview</h2><p class="sub">${EXEC_COPY.overview}${latest?' Latest might snapshot: '+esc(latest)+'.':''}</p></section><section class="kpis">${kpiHtml([['Total Clan Might',short(total)],['Active Players',a.length],['Current Members',a.length],['Average Might',short(avg)],['Highest Might',short(high)],['Lowest Might',isFinite(low)?short(low):'-'],['Growth Snapshot',latest||'-']])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>G-Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Clan Might Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section>${tableCard('Top 10 Strongest Active Players',[...roster].sort((x,y)=>y._might-x._might).slice(0,10),['Player','G-Level','Might','Vault Level','Status'],r=>[pLink(r._name),gBadge(r._g),fmt(r._might),fmt(r._vault),statusBadge(r._status)],'Highest-current-might active roster members from the latest Growth Raw Data snapshot.')}`;chartPie('c1',groupCount(a,'_g'));chartLine('c2',growthTrend())}
+function activeRosterMembers(){return state.data.members.filter(m=>memberIsActiveForDate(m._name,todayDate()))}
+function isCurrentEligibleMember(m){return !!(m&&memberIsActiveForDate(m._name,todayDate()))}
+function renderOverview(){const a=activeRosterMembers(),members=state.data.members,snap=latestGrowthSnapshot(),roster=snap.length?snap:a.map(m=>({_name:m._name,_g:m._g,_hero:0,_week:'',_status:m._status,_might:m._might})),total=latestGrowthTotal(),avg=roster.length?total/roster.length:0,high=Math.max(0,...roster.map(m=>m._might)),low=Math.min(...roster.map(m=>m._might).filter(v=>num(v)>0)),latest=latestGrowthWeek();$('app').innerHTML=`<section class="content-head glass"><h2>Overview</h2><p class="sub">${EXEC_COPY.overview}${latest?' Latest might snapshot: '+esc(latest)+'.':''}</p></section><section class="kpis">${kpiHtml([['Total Clan Might',short(total)],['Active Players',a.length],['Current Members',a.length],['Average Might',short(avg)],['Highest Might',short(high)],['Lowest Might',isFinite(low)?short(low):'-'],['Growth Snapshot',latest||'-']])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>G-Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Clan Might Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section>${tableCard('Top 10 Strongest Active Players',[...roster].sort((x,y)=>y._might-x._might).slice(0,10),['Player','G-Level','Hero Level','Might','Status'],r=>[pLink(r._name),gBadge(r._g),heroLevelText(r),fmt(r._might),statusBadge(r._status)],'Top active players by current might, with current G-Level and Hero Level.')}`;chartPie('c1',groupCount(a,'_g'));chartLine('c2',growthTrend())}
 function growthPlayerHistory(name, beforeWeek=''){const kk=key(name);return (state.data.growthRaw||[]).filter(r=>key(r._name)===kk&&r._week&&(!beforeWeek||String(r._week).localeCompare(String(beforeWeek))<0)).sort((a,b)=>String(a._week).localeCompare(String(b._week)))}
 function growthLifecycleSnapshot(selectedWeek){const weeks=growthWeeks(),idx=weeks.indexOf(selectedWeek),prevWeek=idx>0?weeks[idx-1]:'';const currentRows=growthRowsForWeek(selectedWeek),previousRows=prevWeek?growthRowsForWeek(prevWeek):[];const currentMap=new Map(currentRows.map(r=>[key(r._name),r]));const previousMap=new Map(previousRows.map(r=>[key(r._name),r]));const earlierByPlayer=new Map(),firstByPlayer=new Map();(state.data.growthRaw||[]).forEach(r=>{if(!r._week||String(r._week).localeCompare(String(selectedWeek))>0)return;const kk=key(r._name);if(!kk)return;const first=firstByPlayer.get(kk);if(!first||String(r._week).localeCompare(String(first._week))<0)firstByPlayer.set(kk,r);if(String(r._week).localeCompare(String(selectedWeek))<0){const last=earlierByPlayer.get(kk);if(!last||String(r._week).localeCompare(String(last._week))>0)earlierByPlayer.set(kk,r)}});let current=currentRows.map(r=>{const kk=key(r._name),prev=previousMap.get(kk),last=earlierByPlayer.get(kk),first=firstByPlayer.get(kk);let lifecycle='New',growth=null,growthPct=null,lastSeen='—',growthLabel='New Member';if(prev){lifecycle='Active';growth=r._might-prev._might;growthPct=prev._might>0?(growth/prev._might)*100:null;lastSeen=prevWeek;growthLabel=fmt(growth)}else if(last){lifecycle='Returned';growth=r._might-last._might;lastSeen=last._week;growthLabel=fmt(growth)+' since '+last._week}return {...r,_g:r._g||memberG(r._name),_lifecycle:lifecycle,_change:growth,_growthPct:growthPct,_previousMight:prev?prev._might:null,_growthLabel:growthLabel,_lastSeen:lastSeen,_firstWeek:first?first._week:r._week,_total:first?r._might-first._might:0}});const leftMap=new Map();previousRows.forEach(r=>{const kk=key(r._name);if(!kk||currentMap.has(kk)||leftMap.has(kk))return;leftMap.set(kk,{...r,_g:r._g||memberG(r._name),_lifecycle:'Left',_change:null,_lastSeen:prevWeek})});const left=[...leftMap.values()];return {weeks,selectedWeek,prevWeek,current,left,active:current.filter(r=>r._lifecycle==='Active'),newMembers:current.filter(r=>r._lifecycle==='New'),returned:current.filter(r=>r._lifecycle==='Returned')}}
 function growthMovementForWeek(week){const s=growthLifecycleSnapshot(week);return {New:s.newMembers.length,Returned:s.returned.length,Left:s.left.length,'Net Change':s.newMembers.length+s.returned.length-s.left.length}}
 function growthListCard(title,rows,chip,valueFn,sub){return card(title,sub,rows.length?`<ul class="list">${rows.map(r=>`<li><span>${pLink(r._name)}</span><span>${gBadge(r._g||memberG(r._name)||'')}</span><span>${esc(valueFn(r))}</span></li>`).join('')}</ul>`:`<div class="empty">No records.</div>`,chip)}
-function lifecycleSummaryCard(rows){return card('Lifecycle Summary','Membership classification derived entirely from Growth Raw Data.',`<ul class="list">${rows.map(r=>`<li style="grid-template-columns:minmax(0,1fr) 110px"><span><strong>${esc(r._name)}</strong></span><span>${fmt(r._value)}</span></li>`).join('')}</ul>`,'Lifecycle')}
+function growthMetricCard(title,rows,chip,sub){
+ return card(title,sub,rows.length?`
+  <div class="growth-metric-head"><span>Player</span><span>G-Level</span><span>Might Gained</span><span>Growth %</span></div>
+  <ul class="growth-metric-list">${rows.map(r=>`<li>
+   <span>${pLink(r._name)}</span>
+   <span>${gBadge(r._g||memberG(r._name)||'')}</span>
+   <span class="gain">${fmt(r._change)}</span>
+   <span class="gpct">${Number.isFinite(r._growthPct)?r._growthPct.toFixed(2)+'%':'—'}</span>
+  </li>`).join('')}</ul>`:`<div class="empty">No comparable player records.</div>`,chip)
+}
+function lifecycleSummaryCard(rows){return card('Lifecycle Summary','Current membership movement by lifecycle status.',`<ul class="list">${rows.map(r=>`<li style="grid-template-columns:minmax(0,1fr) 110px"><span><strong>${esc(r._name)}</strong></span><span>${fmt(r._value)}</span></li>`).join('')}</ul>`,'Lifecycle')}
 function growthGLevelRoster(analysis){
  const levels=['G9','G8','G7','G6','G5','G4'];
  const groups=levels.map(g=>{
@@ -290,14 +428,28 @@ function growthGLevelRoster(analysis){
  if(unknown.length)groups.push({g:'Unknown / Unassigned',rows:unknown});
  const cards=groups.map(x=>card(
   x.g==='Unknown / Unassigned'?x.g:x.g+' Members',
-  x.g==='Unknown / Unassigned'?'Players in the selected week without a valid G4–G9 classification.':'Players in the selected Growth Raw Data week classified as '+x.g+'.',
-  `<ul class="list">${x.rows.map(r=>`<li><span>${pLink(r._name)}</span><span>${short(r._might)}</span></li>`).join('')}</ul>`,
+  x.g==='Unknown / Unassigned'?'Players without an assigned G-Level for the selected week.':'Current '+x.g+' players for the selected week.',
+  `<div class="g-roster-head"><span>Player</span><span>Hero Level</span><span>Might</span></div><ul class="list">${x.rows.map(r=>`<li><span>${pLink(r._name)}</span><span>${heroLevelText(r)}</span><span>${short(r._might)}</span></li>`).join('')}</ul>`,
   x.rows.length+' members',
   'g-card '+gClass(x.g)
  )).join('');
- return cards?`<section class="content-head glass"><h2>Selected Week Players by G-Level</h2><p class="sub">Classification is read from the G-Level stored in Growth Raw Data for the selected week. Global Members Masterfile is used only as a fallback when that value is blank.</p></section><section class="g-roster-grid dynamic-source" data-pack-columns="3">${cards}</section>`:'';
+ return cards?`<section class="content-head glass"><h2>Selected Week Players by G-Level</h2><p class="sub">Player strength by G-Level, Hero Level and Might for the selected week.</p></section><section class="g-roster-grid dynamic-source" data-pack-columns="3">${cards}</section>`:'';
 }
-function renderGrowth(){const weeks=growthWeeks(),latest=state.selected||(weeks.length?weeks[weeks.length-1]:'');const life=growthLifecycleSnapshot(latest);let analysis=filteredRows(life.current);const active=analysis.filter(r=>r._lifecycle==='Active'),newMembers=analysis.filter(r=>r._lifecycle==='New'),returned=analysis.filter(r=>r._lifecycle==='Returned'),left=state.g?life.left.filter(r=>r._g===state.g):life.left,clanMight=analysis.reduce((s,r)=>s+r._might,0),comparableGrowth=active.reduce((s,r)=>s+num(r._change),0),avgGrowth=active.length?comparableGrowth/active.length:0,development=active.filter(r=>r._might<200000000||num(r._change)<=0).sort((a,b)=>a._might-b._might||num(a._change)-num(b._change)),positive=active.filter(r=>num(r._change)>0),slowGrowers=active.filter(r=>Number.isFinite(r._growthPct)).sort((a,b)=>a._growthPct-b._growthPct).slice(0,10),net=newMembers.length+returned.length-left.length;$('app').innerHTML=`<section class="content-head glass"><h2>Growth Intelligence</h2><p class="sub">Growth Raw Data is the authoritative source for membership movement, clan might and player growth. Returned players are separated from consecutive-week growth.</p></section><section class="kpis">${kpiHtml([['Selected Week',latest||'-','Current Growth Raw Data snapshot'],['Current Members',analysis.length,'Players present in selected snapshot'],['Clan Might',short(clanMight),'Total might in selected snapshot'],['Comparable Growth',short(comparableGrowth),'Consecutive-snapshot players only'],['Average Growth',short(avgGrowth),active.length+' comparable players'],['New Members',newMembers.length,'First-ever appearance'],['Members Left',left.length,'Present previously, missing now'],['Below 200M',analysis.filter(r=>r._might<200000000).length,'Development pipeline']])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Clan Might Trend</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Selected Week Membership Movement</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div><div class="glass"><div class="panel-head"><h3>Top 10 Comparable Weekly Gains</h3></div><div class="panel-body"><div class="chartbox" id="c3"></div></div></div><div class="glass"><div class="panel-head"><h3>Top 10 All-Time Growth</h3></div><div class="panel-body"><div class="chartbox" id="c4"></div></div></div></section><section class="growth-intel-grid">${growthListCard('Development Focus',development.slice(0,10),'Growth Risk',r=>r._might<200000000?short(r._might):fmt(r._change),'Below 200M or no/negative comparable growth.')}${growthListCard('Returned Players',returned,'Returned',r=>r._growthLabel,'Growth since last recorded appearance; excluded from weekly leaderboard.')}${growthListCard('New Members',newMembers,'New',r=>short(r._might),'First appearance in Growth Raw Data.')}${growthListCard('Members Left',left,'Left',r=>short(r._might),'Present in previous snapshot but absent from selected snapshot.')}</section><section class="intel-grid">${listCard('Highest Improvers',[...positive].sort((a,b)=>b._change-a._change).slice(0,10),'Improvers','Consecutive-snapshot growth only.')}${growthListCard('Slow Growers (%)',slowGrowers,'Growth %',r=>r._growthPct.toFixed(2)+'%','Bottom 10 comparable players by week-on-week growth percentage.')}${lifecycleSummaryCard([{_name:'Active',_value:active.length},{_name:'New',_value:newMembers.length},{_name:'Returned',_value:returned.length},{_name:'Left',_value:left.length}])}</section>${tableCard('Player Analysis by Selected Week',analysis.sort((a,b)=>b._might-a._might),['Rank','Player','G-Level','Lifecycle','Current Might','Growth','Last Seen','Total Growth'],(r,i)=>[i+1,pLink(r._name),gBadge(r._g),statusBadge(r._lifecycle),fmt(r._might),esc(r._growthLabel),esc(r._lastSeen),fmt(r._total)],'Returned players show growth since their last recorded appearance. New members are not included in comparable weekly growth.')}${growthGLevelRoster(analysis)}`;chartLine('c1',growthTrend());chartBar('c2',growthMovementForWeek(latest));chartBar('c3',topObj(positive,'_name','_change',10));chartBar('c4',topObj(allTimeGrowthRows(),'_name','_growth',10))}
+function renderGrowth(){const weeks=growthWeeks(),latest=state.selected||(weeks.length?weeks[weeks.length-1]:'');const life=growthLifecycleSnapshot(latest);let analysis=filteredRows(life.current);const active=analysis.filter(r=>r._lifecycle==='Active'),newMembers=analysis.filter(r=>r._lifecycle==='New'),returned=analysis.filter(r=>r._lifecycle==='Returned'),left=state.g?life.left.filter(r=>r._g===state.g):life.left,clanMight=analysis.reduce((s,r)=>s+r._might,0),comparableGrowth=active.reduce((s,r)=>s+num(r._change),0),avgGrowth=active.length?comparableGrowth/active.length:0,development=active.filter(r=>{const g=num(clean(r._g).replace('G',''));return (g>0&&g<=6)||(g>=7&&r._might<=200000000)}).sort((a,b)=>a._might-b._might||String(a._name).localeCompare(String(b._name))),positive=active.filter(r=>num(r._change)>0),slowGrowers=active.filter(r=>Number.isFinite(r._growthPct)).sort((a,b)=>a._growthPct-b._growthPct).slice(0,10),net=newMembers.length+returned.length-left.length;$('app').innerHTML=`<section class="content-head glass"><h2>Growth Intelligence</h2><p class="sub">Weekly clan growth, roster movement, player progression and development priorities.</p></section><section class="kpis">${kpiHtml([['Selected Week',latest||'-','Selected reporting week'],['Current Members',analysis.length,'Players recorded for the selected week'],['Clan Might',short(clanMight),'Combined might for the selected week'],['Comparable Growth',short(comparableGrowth),'Players recorded in consecutive weeks'],['Average Growth',short(avgGrowth),active.length+' comparable players'],['New Members',newMembers.length,'New player entries'],['Members Left',left.length,'Players no longer present in the selected week'],['Development Focus',development.length,'G6 and below, plus G7+ at or below 200M']])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Clan Might Trend</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Selected Week Membership Movement</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div><div class="glass"><div class="panel-head"><h3>Top 10 Comparable Weekly Gains</h3></div><div class="panel-body"><div class="chartbox" id="c3"></div></div></div><div class="glass"><div class="panel-head"><h3>Top 10 All-Time Growth</h3></div><div class="panel-body"><div class="chartbox" id="c4"></div></div></div></section><section class="growth-pack-grid">
+  <div class="dynamic-column">
+    ${growthListCard('Development Focus',development,'Development',r=>short(r._might),'All active G6 and below players, plus G7 and above players at or below 200M might.')}
+  </div>
+  <div class="dynamic-column">
+    ${growthListCard('Members Left',left,'Left',r=>short(r._might),'Players present in the previous week but absent from the selected week.')}
+    ${growthMetricCard('Highest Improvers',[...positive].filter(r=>Number.isFinite(r._growthPct)).sort((a,b)=>b._growthPct-a._growthPct||num(b._change)-num(a._change)).slice(0,10),'Growth','Strongest week-on-week growth among comparable players.')}
+  </div>
+  <div class="dynamic-column">
+    ${growthListCard('New Members',newMembers,'New',r=>short(r._might),'Players appearing for the first time in the selected reporting history.')}
+    ${returned.length?growthListCard('Returned Players',returned,'Returned',r=>r._growthLabel,'Players returning after an absence, with growth since their previous appearance.'):""}
+    ${lifecycleSummaryCard([{_name:'Active',_value:active.length},{_name:'New',_value:newMembers.length},{_name:'Returned',_value:returned.length},{_name:'Left',_value:left.length}])}
+    ${growthMetricCard('Slow Growers (%)',slowGrowers,'Growth %','Lowest week-on-week growth percentages among comparable players.')}
+  </div>
+</section>${tableCard('Player Analysis by Selected Week',analysis.sort((a,b)=>b._might-a._might),['Rank','Player','G-Level','Hero Level','Lifecycle','Current Might','Growth','Last Seen','Total Growth'],(r,i)=>[i+1,pLink(r._name),gBadge(r._g),heroLevelText(r),statusBadge(r._lifecycle),fmt(r._might),esc(r._growthLabel),esc(r._lastSeen),fmt(r._total)],'Player growth and lifecycle position for the selected week.')}${growthGLevelRoster(analysis)}`;chartLine('c1',growthTrend());chartBar('c2',growthMovementForWeek(latest));chartBar('c3',topObj(positive,'_name','_change',10));chartBar('c4',topObj(allTimeGrowthRows(),'_name','_growth',10))}
 function renderEventModule(k,title,scoreLabel){
  const sourceRows=selectedRows(state.data[k]||[]).filter(r=>r._name),
  eventId=state.selected||(sourceRows[0]?._eventId||''),
@@ -317,6 +469,9 @@ function renderEventModule(k,title,scoreLabel){
  below=resultRows.filter(r=>r._target>0&&r._score<r._target).length,
  underperformers=resultRows.filter(r=>r._target>0&&r._score<r._target)
    .sort((a,b)=>(a._score/a._target)-(b._score/b._target)||(b._target-b._score)-(a._target-a._score)||a._score-b._score);
+ const redZone=underperformers
+   .filter(r=>r._target>0&&(r._score/r._target)<=0.80)
+   .sort((a,b)=>(a._score/a._target)-(b._score/b._target)||a._score-b._score);
 
  const resultsTable=tableCard(
    'Player Results',
@@ -324,14 +479,14 @@ function renderEventModule(k,title,scoreLabel){
    ['Rank','Player','G-Level','Target',scoreLabel,'Difference','Status'],
    r=>[
      r._rank||'',
-     pLink(r._name),
+     exemptAwarePlayerName(eventId,r,eventDate),
      esc(r._g||memberG(r._name)),
      fmt(r._target),
      fmt(r._score),
      fmt(r._score-r._target),
      statusBadge(r._status||((r._score>=r._target)?'Met Target':'Below Target'))
    ],
-   `${resultRows.length} visible records. Zero-point exempt players are excluded; exempt players who participated remain included.`
+   `${resultRows.length} player results for the selected event.`
  );
 
  $('app').innerHTML=`
@@ -360,10 +515,18 @@ function renderEventModule(k,title,scoreLabel){
 
  ${resultsTable}
 
- <section class="intel-grid">
-   ${listCard('Underperformers',underperformers,'Underperformers',EXEC_COPY.underperformers)}
-   ${listCard('Top Performers',[...participantRows].sort((a,b)=>b._score-a._score).slice(0,10),'Top',EXEC_COPY.topPerformers)}
-   ${listCard('Repeat Underperformers',repeatUnder(k,eventId).slice(0,10),'Repeat Risk',EXEC_COPY.repeatRisk)}
+ <section class="score-intel-grid">
+   <div class="dynamic-column">
+     ${exemptAwareListCard('Underperformers',underperformers,'Underperformers',EXEC_COPY.underperformers,eventId,eventDate)}
+   </div>
+   <div class="dynamic-column">
+     ${listCard('Top Performers',[...participantRows].sort((a,b)=>b._score-a._score).slice(0,10),'Top',EXEC_COPY.topPerformers)}
+     ${listCard('Consecutive Underperformers',consecutiveUnder(k,eventId).slice(0,10),'3+ Consecutive',EXEC_COPY.consecutiveRisk)}
+     ${listCard('Repeat Underperformers',repeatUnder(k,eventId).slice(0,10),'Repeat Risk',EXEC_COPY.repeatRisk)}
+   </div>
+   <div class="dynamic-column">
+     ${redZoneCard(redZone,eventId,eventDate)}
+   </div>
  </section>`;
 
  chartBar('c1',topObj(participantRows,'_name','_score',10));
@@ -371,49 +534,263 @@ function renderEventModule(k,title,scoreLabel){
  chartPie('c3',{'Met Target':met,'Below Target':below});
  chartLine('c4',eventTrend((state.data[k]||[]).filter(r=>rowHasParticipation(k,r))))
 }
+
+function renderRagnarok(){
+ const k='ragnarok',title='Ragnarök',scoreLabel='Score',
+ sourceRows=selectedRows(state.data.ragnarok||[]).filter(r=>r._name),
+ eventId=state.selected||(sourceRows[0]?._eventId||''),
+ meta=eventId?eventMeta(eventId):{},
+ eventDate=eventDateFromSelection(sourceRows),
+ eligibleMembers=filteredRows(eligibleMembersForDate(eventDate).map(m=>({...m,_g:m._g||memberG(m._name)}))),
+ baseAvailable=state.g?eligibleMembers.length:(meta._available||sourceRows[0]?._available||eligibleMembers.length),
+ activeRows=sourceRows.filter(r=>memberIsActiveForDate(r._name,eventDate)),
+ participantRows=activeRows.filter(r=>rowHasParticipation(k,r)),
+ effectiveExemptions=effectiveExemptedMembers(eventId,eligibleMembers,activeRows,k,eventDate),
+ exemptButParticipated=participantRows.filter(r=>rowIsExempt(eventId,r,eventDate)),
+ eligible=eligibleCountAfterEffectiveExempt(eventId,baseAvailable,eligibleMembers,activeRows,k,eventDate),
+ participants=participantRows.length,
+ total=participantRows.reduce((s,r)=>s+r._score,0),
+ nonParticipants=outstandingEventEntries(eventId,activeRows,eligibleMembers,k,eventDate)
+   .map(m=>({_name:m._name,_id:m._id,_g:m._g||memberG(m._name),_score:0}))
+   .sort((a,b)=>String(a._name).localeCompare(String(b._name)));
+
+ const participationByG={};
+ eligibleMembers.forEach(m=>{
+  if(isPlayerExempt(eventId,m,eventDate)&&!participantRows.some(r=>samePlayer(m,r)))return;
+  const g=m._g||memberG(m._name)||'Unknown';
+  participationByG[g]=participationByG[g]||{eligible:0,participants:0};
+  participationByG[g].eligible++;
+  if(participantRows.some(r=>samePlayer(m,r)))participationByG[g].participants++;
+ });
+ const participationPctByG=Object.fromEntries(
+  Object.entries(participationByG).map(([g,v])=>[g,v.eligible?(v.participants/v.eligible)*100:0])
+ );
+
+ const resultRows=[...activeRows].sort((a,b)=>b._score-a._score||num(a._rank)-num(b._rank));
+ const resultsTable=tableCard(
+   'Player Results',
+   resultRows,
+   ['Rank','Player','G-Level',scoreLabel,'Participation'],
+   r=>[
+     r._rank||'',
+     pLink(r._name),
+     esc(r._g||memberG(r._name)),
+     fmt(r._score),
+     statusBadge(rowHasParticipation(k,r)?'Participated':'Missed')
+   ],
+   `${resultRows.length} Ragnarök player records for the selected event.`
+ );
+
+ $('app').innerHTML=`
+ <section class="content-head glass">
+   <h2>${title}</h2>
+   <p class="sub">${EXEC_COPY.ragnarok}</p>
+ </section>
+
+ <section class="kpis">${kpiHtml([
+   ['Available Members',baseAvailable],
+   ['Effective Exemptions',effectiveExemptions.length],
+   ['Exempt but Participated',exemptButParticipated.length],
+   ['Eligible Members',eligible],
+   ['Participants',participants],
+   ['Participation %',pct(participants,eligible)],
+   ['Total '+scoreLabel,short(total)],
+   ['Non-Participants',nonParticipants.length]
+ ])}</section>
+
+ <section class="chart-grid">
+   <div class="glass"><div class="panel-head"><h3>Top 10 ${scoreLabel}</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div>
+   <div class="glass"><div class="panel-head"><h3>G-Level Performance</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div>
+   <div class="glass"><div class="panel-head"><h3>Participation Compliance by G-Level</h3></div><div class="panel-body"><div class="chartbox" id="c3"></div></div></div>
+   <div class="glass"><div class="panel-head"><h3>Participation Trend</h3></div><div class="panel-body"><div class="chartbox" id="c4"></div></div></div>
+ </section>
+
+ ${resultsTable}
+
+ <section class="score-intel-grid">
+   <div class="dynamic-column">
+     ${listCard('Non-Participants',nonParticipants,'Mandatory','Eligible players with no recorded Ragnarök participation for the selected event.')}
+   </div>
+   <div class="dynamic-column">
+     ${listCard('Top Performers',[...participantRows].sort((a,b)=>b._score-a._score).slice(0,10),'Top','Highest Ragnarök scores in the selected event.')}
+     ${listCard('Consecutive Non-Participants',consecutiveUnder(k,eventId).slice(0,10),'3+ Consecutive','Players currently missing three or more consecutive eligible Ragnarök events.')}
+     ${listCard('Repeat Non-Participants',repeatUnder(k,eventId).slice(0,10),'Repeat Risk','Players missing two or more eligible Ragnarök events.')}
+   </div>
+ </section>`;
+
+ chartBar('c1',topObj(participantRows,'_name','_score',10));
+ chartBar('c2',groupSum(participantRows,'_g','_score'));
+ chartBarPercent('c3',participationPctByG,'Participation Compliance');
+ chartLine('c4',eventTrend((state.data.ragnarok||[]).filter(r=>rowHasParticipation('ragnarok',r))));
+}
+
 function repeatUnder(k,eventId=''){
  const map={};
  const selectedEventDate=parseAnyDate(eventMeta(eventId)._date)||null;
- (state.data[k]||[]).forEach(r=>{
-  if(!clean(r._name)||r._target<=0)return;
-  const rowEventId=clean(r._eventId)||clean(eventId);
-  const rowEventDate=parseAnyDate(eventMeta(rowEventId)._date)||parseAnyDate(r._event);
-  const participated=rowHasParticipation(k,r);
-
-  // A player is valid only for events that occurred while they were still a member.
-  // Historical records before departure remain included; records after departure are excluded.
-  if(!memberIsActiveForDate(r._name,rowEventDate))return;
-
-  // When viewing a selected event, the repeat-risk list must also reflect the roster
-  // that was valid on that selected event date.
-  if(selectedEventDate&&!memberIsActiveForDate(r._name,selectedEventDate))return;
-
-  // Exempt non-participants do not count as underperformers.
-  if(rowIsExempt(rowEventId,r,rowEventDate)&&!participated)return;
-
-  if(r._score<r._target){
-   const kk=key(r._name);
-   map[kk]=map[kk]||{_name:r._name,_g:r._g||memberG(r._name),_score:0};
-   map[kk]._score++;
-  }
- });
- return Object.values(map).sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name)))
+ const referenceDate=selectedEventDate||todayDate();
+ if(k==='ragnarok'){
+  const groups=new Map();
+  (state.data.ragnarok||[]).filter(r=>clean(r._name)).forEach(r=>{
+   const gid=clean(r._eventId)||clean(r._event)||'Unknown Event';
+   if(!groups.has(gid))groups.set(gid,[]);
+   groups.get(gid).push(r);
+  });
+  groups.forEach((groupRows,gid)=>{
+   const groupDate=parseAnyDate(eventMeta(gid)._date)||parseAnyDate(groupRows.find(r=>r._event)?._event);
+   if(!groupDate||groupDate>referenceDate)return;
+   (state.data.members||[]).forEach(member=>{
+    if(!memberIsActiveForDate(member._name,groupDate)||!memberIsActiveForDate(member._name,referenceDate))return;
+    const row=bestPlayerRow(groupRows,member,'ragnarok');
+    const participated=!!row&&rowHasParticipation('ragnarok',row);
+    if(isPlayerExempt(gid,member,groupDate)&&!participated)return;
+    if(!participated){
+     const kk=key(member._name);
+     map[kk]=map[kk]||{_name:member._name,_g:member._g||memberG(member._name),_score:0};
+     map[kk]._score++;
+    }
+   });
+  });
+ }else{
+  (state.data[k]||[]).forEach(r=>{
+   if(!clean(r._name)||r._target<=0)return;
+   const rowEventId=clean(r._eventId)||clean(eventId);
+   const rowEventDate=parseAnyDate(eventMeta(rowEventId)._date)||parseAnyDate(r._event);
+   if(!rowEventDate)return;
+   if(referenceDate&&rowEventDate.getTime()>referenceDate.getTime())return;
+   const participated=rowHasParticipation(k,r);
+   if(!memberIsActiveForDate(r._name,rowEventDate))return;
+   if(!memberIsActiveForDate(r._name,referenceDate))return;
+   if(rowIsExempt(rowEventId,r,rowEventDate)&&!participated)return;
+   if(r._score<r._target){
+    const kk=key(r._name);
+    map[kk]=map[kk]||{_name:r._name,_g:r._g||memberG(r._name),_score:0};
+    map[kk]._score++;
+   }
+  });
+ }
+ return Object.values(map)
+  .filter(r=>r._score>=2)
+  .filter(r=>!state.g||r._g===state.g)
+  .sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name)));
 }
-
+/*
+ Consecutive Underperformers for score-based events.
+ - Applies to Tinman, Dark Omens, Trials/Olympus and Chest Points by target; Ragnarök by mandatory participation.
+ - Current unresolved streak only.
+ - 3+ consecutive eligible failures are shown.
+ - Meeting target resets streak to zero.
+ - Valid exempt non-participation is neutral: skipped, neither fail nor reset.
+ - Inactive/Pending players are excluded.
+ - Join/leave periods are enforced.
+ - When an event is selected, the card reflects the roster valid for that event.
+*/
+function consecutiveUnder(k,eventId=''){
+ const allowed=['tinman','darkOmens','trials','ragnarok','chestpoints'];
+ if(!allowed.includes(k))return[];
+ const selectedEventDate=parseAnyDate(eventMeta(eventId)._date)||null;
+ const referenceDate=selectedEventDate||todayDate();
+ const rows=(state.data[k]||[]).filter(r=>clean(r._name));
+ const groups=new Map();
+ rows.forEach(r=>{
+  const groupId=clean(r._eventId)||clean(r._event)||'Unknown Event';
+  if(!groups.has(groupId))groups.set(groupId,[]);
+  groups.get(groupId).push(r);
+ });
+ const ordered=[...groups.entries()]
+  .map(([groupId,groupRows])=>{
+   const meta=eventMeta(groupId);
+   const groupDate=parseAnyDate(meta._date)||parseAnyDate(groupRows.find(r=>r._event)?._event)||null;
+   return {groupId,groupRows,groupDate,meta};
+  })
+  .filter(x=>x.groupDate)
+  .filter(x=>!referenceDate||x.groupDate.getTime()<=referenceDate.getTime())
+  .sort((a,b)=>a.groupDate-b.groupDate);
+ const out=[];
+ (state.data.members||[]).forEach(member=>{
+  if(!member||!clean(member._name))return;
+  if(!memberIsActiveForDate(member._name,referenceDate))return;
+  let currentStreak=0;
+  ordered.forEach(({groupId,groupRows,groupDate,meta})=>{
+   if(!memberIsActiveForDate(member._name,groupDate))return;
+   const matches=groupRows.filter(r=>samePlayer(r,member));
+   const row=matches.length?[...matches].sort((a,b)=>num(b._score)-num(a._score))[0]:null;
+   const participated=row?rowHasParticipation(k,row):false;
+   const exempt=isPlayerExempt(groupId,member,groupDate);
+   if(exempt&&!participated)return;
+   if(k==='ragnarok'){
+    if(participated)currentStreak=0; else currentStreak++;
+    return;
+   }
+   const target=num(row?._target)||num(meta?._target);
+   if(target<=0)return;
+   const score=row?num(row._score):0;
+   if(score>=target)currentStreak=0; else currentStreak++;
+  });
+  if(currentStreak>=3)out.push({_name:member._name,_g:member._g||memberG(member._name),_score:currentStreak});
+ });
+ return out.filter(r=>!state.g||r._g===state.g).sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name)));
+}
 function parseAnyDate(v){v=clean(v);if(!v)return null;let d=new Date(v);if(!isNaN(d))return d;let m=v.match(/(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);if(m)return new Date(+m[1],+m[2]-1,+m[3]);m=v.match(/(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);return null}
 function eventDateFromSelection(rows){let meta=state.selected?eventMeta(state.selected):{};return parseAnyDate(meta._date)||parseAnyDate(rows.find(r=>r._event)?._event)||null}
 function eligibleMembersForDate(eventDate){
  if(!eventDate)return activeRosterMembers();
  return state.data.members.filter(m=>memberIsActiveForDate(m._name,eventDate));
 }
-function updateHealthWarnings(){const failed=Object.entries(LIVE_STATUS).filter(([k,v])=>v&&v.status!=='Loaded');const el=$('warningBanner');if(!el)return;if(!failed.length){el.classList.remove('show');el.innerHTML='';return}el.classList.add('show');el.innerHTML='⚠ Some live Google Sheets did not return usable data: '+failed.map(([k])=>esc(k)).join(', ')+'. Other modules continue to work.'}
+function updateHealthWarnings(){
+ const el=$('warningBanner');
+ if(!el)return;
+
+ const critical={
+  members:'Player roster',
+  eventSetup:'Event setup',
+  growth:'Growth',
+  tinman:'Tinman',
+  darkOmens:'Dark Omens',
+  trials:'Trials of Olympus',
+  ragnarok:'Ragnarök',
+  chestpoints:'Chest Points',
+  vaults:'Vaults'
+ };
+
+ const isLive=v=>!!(v&&v.status==='Live'&&num(v.rows)>0);
+ const isFallback=v=>!!(v&&v.status==='Fallback Active'&&num(v.rows)>0);
+
+ // Keep complete diagnostics technical and out of the normal user-facing view.
+ const diagnostics=Object.entries(LIVE_STATUS).map(([source,info])=>({
+  source,
+  state:isLive(info)?'LIVE':isFallback(info)?'FALLBACK':info?.status||'UNKNOWN',
+  rows:num(info?.rows),
+  via:info?.source||'',
+  attempts:num(info?.attempts),
+  error:info?.error||''
+ }));
+ console.info('WoA live data health:',diagnostics);
+
+ // Public warning only when a critical module has neither live data nor a valid fallback.
+ const unavailable=Object.entries(critical)
+  .filter(([source])=>{
+   const info=LIVE_STATUS[source];
+   return info && !isLive(info) && !isFallback(info);
+  });
+
+ if(!unavailable.length){
+  el.classList.remove('show');
+  el.innerHTML='';
+  return;
+ }
+
+ el.classList.add('show');
+ el.innerHTML='⚠ Live data is temporarily unavailable for: '+
+  unavailable.map(([,label])=>esc(label)).join(', ')+
+  '. Other available intelligence remains accessible.';
+}
 
 
 const CONSOLIDATED_EVENTS=[
  {key:'tinman',label:'Tinman',short:'Tinman',type:'score'},
  {key:'darkOmens',label:'Dark Omens',short:'Dark Omens',type:'score'},
  {key:'trials',label:'Trials of Olympus',short:'Trials',type:'score'},
- {key:'ragnarok',label:'Ragnarök',short:'Ragnarök',type:'score'},
+ {key:'ragnarok',label:'Ragnarök',short:'Ragnarök',type:'participation'},
  {key:'chestpoints',label:'Chest Points',short:'Chest',type:'score'},
  {key:'vaults',label:'Vaults',short:'Vaults',type:'vault'}
 ];
@@ -444,9 +821,9 @@ function bestPlayerRow(rows,member,dataset){
  if(dataset==='vaults')return matches.sort((a,b)=>num(b._vault)-num(a._vault))[0];
  return matches.sort((a,b)=>num(b._score)-num(a._score))[0];
 }
-function consolidatedPerformanceRows(){
+function consolidatedPerformanceRows(ignoreGFilter=false){
  let roster=activeRosterMembers().map(m=>({...m,_g:m._g||memberG(m._name)}));
- if(state.g)roster=roster.filter(m=>m._g===state.g);
+ if(state.g&&!ignoreGFilter)roster=roster.filter(m=>m._g===state.g);
 
  const result=new Map(roster.map(m=>[key(m._id||m._name),{
   _id:m._id,_name:m._name,_g:m._g,_status:m._status,
@@ -475,6 +852,9 @@ function consolidatedPerformanceRows(){
     if(cfg.type==='vault'){
      eligible=true;
      success=!!row&&rowHasParticipation('vaults',row);
+    }else if(cfg.type==='participation'){
+     eligible=true;
+     success=!!row&&rowHasParticipation(cfg.key,row);
     }else{
      const target=num(row?._target)||num(meta._target);
      if(target<=0)return;
@@ -537,7 +917,7 @@ function renderConsolidatedPerformance(){
  $('app').innerHTML=`
  <section class="content-head glass">
   <h2>Consolidated Performance</h2>
-  <p class="sub">Live cross-event intelligence across Tinman, Dark Omens, Trials, Ragnarök, Chest Points and Vaults. Rankings recalculate automatically whenever results, membership, G-Levels or exemptions change. Historical results count only while each player was eligible, and valid exempt non-participation is excluded.</p>
+  <p class="sub">Cross-event performance across Tinman, Dark Omens, Trials, Ragnarök, Chest Points and Vaults, highlighting consistency and recurring risk.</p>
  </section>
 
  <section class="kpis">${kpiHtml([
@@ -571,7 +951,7 @@ function renderConsolidatedPerformance(){
    matrixCell(r._events.tinman),matrixCell(r._events.darkOmens),matrixCell(r._events.trials),
    matrixCell(r._events.ragnarok),matrixCell(r._events.chestpoints),matrixCell(r._events.vaults)
   ],
-  'Success = target met or vault built. Failure = eligible result below target, missing result, or missing vault. Valid exemptions and periods outside membership are excluded.'
+  'Success = target met for target-based events, participation recorded for Ragnarök, or vault built. Failure = eligible non-compliance. Valid exemptions and periods outside membership are excluded.'
  )}
  `;
  chartPie('conClass',classificationCounts);
@@ -651,11 +1031,10 @@ function renderVaults(){
  });
  const mostVaultsBuilt=Object.values(vaultBuildMap).sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name))).slice(0,10);
 
- // Repeat Non Vault Builders:
- // One miss per eligible player per Vault event.
- // Exempt non-builders are excluded; exempt builders remain successful.
- // Membership dates and duplicate rows are respected.
- const repeatVaultMisses=new Map();
+ // Vault compliance intelligence is intentionally split into two independent measures:
+ // 1) Repeat Non Vault Builders = 2+ eligible misses overall, whether consecutive or not.
+ // 2) Consecutive Non Vault Builders = 3+ consecutive eligible misses; a build resets the streak.
+ // Both respect membership dates, exemptions, duplicate rows, and the roster valid for the selected event.
  const vaultEventGroups=new Map();
 
  (state.data.vaults||[]).forEach(r=>{
@@ -664,53 +1043,93 @@ function renderVaults(){
   vaultEventGroups.get(groupId).push(r);
  });
 
- vaultEventGroups.forEach((groupRows,groupId)=>{
-  const groupMeta=eventMeta(groupId);
-  const groupDate=parseAnyDate(groupMeta._date)||parseAnyDate(groupRows.find(r=>r._event)?._event)||null;
-  const groupEligible=eligibleMembersForDate(groupDate);
+ const vaultReferenceDate=eventDate||todayDate();
+ const orderedVaultEvents=[...vaultEventGroups.entries()]
+  .map(([groupId,groupRows])=>{
+   const groupMeta=eventMeta(groupId);
+   const groupDate=parseAnyDate(groupMeta._date)||parseAnyDate(groupRows.find(r=>r._event)?._event)||null;
+   return {groupId,groupRows,groupDate};
+  })
+  .filter(x=>x.groupDate)
+  .filter(x=>!vaultReferenceDate||x.groupDate.getTime()<=vaultReferenceDate.getTime())
+  .sort((a,b)=>a.groupDate-b.groupDate);
 
-  // Deduplicate successful builders for this event.
-  const groupBuiltKeys=new Set();
-  groupRows
-   .filter(r=>r._name&&memberIsActiveForDate(r._name,groupDate))
-   .filter(r=>rowHasParticipation('vaults',r))
-   .forEach(r=>addKeys(groupBuiltKeys,r));
+ const repeatVaultMisses=new Map();
+ const consecutiveVaultMisses=new Map();
 
-  groupEligible.forEach(member=>{
+ (state.data.members||[]).forEach(member=>{
+  if(!member||!member._name)return;
+  if(!memberIsActiveForDate(member._name,vaultReferenceDate))return;
+
+  let totalMisses=0;
+  let currentStreak=0;
+
+  orderedVaultEvents.forEach(({groupId,groupRows,groupDate})=>{
+   // Ignore pre-join and post-departure Vaults.
    if(!memberIsActiveForDate(member._name,groupDate))return;
 
-   // The repeat-risk card must reflect the roster valid for the selected Vault event.
-   // Former members remain visible only when the selected event occurred before
-   // or on their recorded departure date.
-   if(eventDate&&!memberIsActiveForDate(member._name,eventDate))return;
-
-   const built=hasAnyKey(groupBuiltKeys,member);
    const exempt=isPlayerExempt(groupId,member,groupDate);
+   const built=groupRows
+    .filter(r=>r._name&&memberIsActiveForDate(r._name,groupDate))
+    .filter(r=>rowHasParticipation('vaults',r))
+    .some(r=>samePlayer(r,member)||hasAnyKey(new Set(vaultKeys(r)),member));
 
+   // An exemption with no build is neutral: it does not count as a miss and does not reset the streak.
    if(exempt&&!built)return;
-   if(built)return;
 
-   const memberKey=uniqueKey(member);
-   if(!memberKey)return;
-
-   if(!repeatVaultMisses.has(memberKey)){
-    repeatVaultMisses.set(memberKey,{
-     _name:member._name,
-     _g:member._g||memberG(member._name),
-     _score:0
-    });
+   if(built){
+    // A successful build clears the active consecutive-miss streak.
+    currentStreak=0;
+   }else{
+    totalMisses++;
+    currentStreak++;
    }
-   repeatVaultMisses.get(memberKey)._score++;
   });
+
+  const memberKey=uniqueKey(member);
+  if(!memberKey)return;
+
+  if(totalMisses>=2){
+   repeatVaultMisses.set(memberKey,{
+    _name:member._name,
+    _g:member._g||memberG(member._name),
+    _score:totalMisses
+   });
+  }
+
+  // Consecutive card shows the unresolved CURRENT streak only.
+  // Historical streaks broken by a later build are not shown.
+  if(currentStreak>=3){
+   consecutiveVaultMisses.set(memberKey,{
+    _name:member._name,
+    _g:member._g||memberG(member._name),
+    _score:currentStreak
+   });
+  }
  });
 
  const repeatNonVaultBuilders=[...repeatVaultMisses.values()]
-  .filter(r=>r._score>=2)
   .filter(r=>!state.g||r._g===state.g)
   .sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name)))
   .slice(0,10);
 
- $('app').innerHTML=`<section class="content-head glass"><h2>Vaults</h2><p class="sub">${EXEC_COPY.vaults}</p></section><section class="kpis">${kpiHtml([['Available Members',baseAvailable],['Effective Exemptions',effectiveExemptions.length],['Exempt but Built',exemptButParticipated.length],['Eligible Builders',eligible],['Built Vaults',built],['Non Vault Builders',nonBuilders],['Completion %',pct(built,eligible)],['Highest Vault Level',Math.max(0,...levels)]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Vault Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Vault Build Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section>${tableCard('Vault Results',resultRows.sort((a,b)=>num(b._vault)-num(a._vault)||String(a._name).localeCompare(String(b._name))),['Rank','Player','G-Level','Vault Level','Status'],r=>[r._rank||'',pLink(r._name),gBadge(r._g||memberG(r._name)),fmt(r._vault),statusBadge(r._vaultStatus)],'Non-exempt missing builders remain visible. Exempt non-builders are excluded; exempt builders remain included.')}<section class="vault-menu">${listCard('Non Vault Builders',nonBuilderList,'Missing Builders',EXEC_COPY.nonBuilders)}${listCard('Repeat Non Vault Builders',repeatNonVaultBuilders,'Repeat Risk',EXEC_COPY.repeatVaultRisk)}${listCard('Most Vaults Built',mostVaultsBuilt,'Vaults Built',EXEC_COPY.mostVaults)}</section>`;
+ const consecutiveNonVaultBuilders=[...consecutiveVaultMisses.values()]
+  .filter(r=>!state.g||r._g===state.g)
+  .sort((a,b)=>b._score-a._score||String(a._name).localeCompare(String(b._name)))
+  .slice(0,10);
+
+ $('app').innerHTML=`<section class="content-head glass"><h2>Vaults</h2><p class="sub">${EXEC_COPY.vaults}</p></section><section class="kpis">${kpiHtml([['Available Members',baseAvailable],['Effective Exemptions',effectiveExemptions.length],['Exempt but Built',exemptButParticipated.length],['Eligible Builders',eligible],['Built Vaults',built],['Non Vault Builders',nonBuilders],['Completion %',pct(built,eligible)],['Highest Vault Level',Math.max(0,...levels)]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Vault Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Vault Build Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section>${tableCard('Vault Results',resultRows.sort((a,b)=>num(b._vault)-num(a._vault)||String(a._name).localeCompare(String(b._name))),['Rank','Player','G-Level','Vault Level','Status'],r=>[r._rank||'',pLink(r._name),gBadge(r._g||memberG(r._name)),fmt(r._vault),statusBadge(r._vaultStatus)],'Vault completion status for eligible players in the selected event.')}<section class="vault-menu">
+  <div class="dynamic-column">
+    ${listCard('Non Vault Builders',nonBuilderList,'Missing Builders',EXEC_COPY.nonBuilders)}
+  </div>
+  <div class="dynamic-column">
+    ${listCard('Most Vaults Built',mostVaultsBuilt,'Vaults Built',EXEC_COPY.mostVaults)}
+  </div>
+  <div class="dynamic-column">
+    ${listCard('Consecutive Non Vault Builders',consecutiveNonVaultBuilders,'3+ Consecutive Misses','Players currently on three or more consecutive eligible vault misses.')}
+    ${listCard('Repeat Non Vault Builders',repeatNonVaultBuilders,'2+ Total Misses','Players with two or more eligible vault misses across recorded events.')}
+  </div>
+</section>`;
 
  chartPie('c1',levelCounts);
  chartLine('c2',eventTrend((state.data.vaults||[]).filter(r=>rowHasParticipation('vaults',r))))
@@ -733,7 +1152,7 @@ function renderExemptions(){
  const scheduled=rows.filter(r=>r._lifeStatus==='Scheduled').length,active=rows.filter(r=>r._lifeStatus==='Active').length,expired=rows.filter(r=>r._lifeStatus==='Expired').length;
  rows.forEach(r=>{byEvent[r._displayEvent]=(byEvent[r._displayEvent]||0)+1;byReason[r._reason]=(byReason[r._reason]||0)+1});
  const selectionLabel=$('eventSelect')?.selectedOptions?.[0]?.textContent||'Current / Active';
- $('app').innerHTML=`<section class="content-head glass"><h2>Exemptions</h2><p class="sub">Historical exemption view for ${esc(selectionLabel)}. Global exemptions use From/To dates. Event-specific exemptions are active only on the exact event date.</p></section><section class="kpis">${kpiHtml([['Records',rows.length],['Players Affected',players.size],['Active',active],['Scheduled',scheduled],['Expired',expired],['Vacation',rows.filter(r=>/vacation|leave|holiday/i.test(r._reason)).length],['Non-Vacation',rows.filter(r=>!/vacation|leave|holiday/i.test(r._reason)).length]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Exemptions by Event</h3></div><div class="panel-body"><div class="chartbox" id="exByEvent"></div></div></div><div class="glass"><div class="panel-head"><h3>Exemptions by Reason</h3></div><div class="panel-body"><div class="chartbox" id="exByReason"></div></div></div></section>${tableCard('Exemption History',rows.sort((a,b)=>String(a._name).localeCompare(String(b._name))),['Player','G-Level','Scope','Event','Event Date','From Date','To Date','Reason','Status'],r=>{const m=memberById(r._id)||memberByName(r._name)||{};return[pLink(r._name||m._name),gBadge(m._g||''),statusBadge(r._scope),esc(r._displayEvent),esc(r._eventDate||'—'),esc(r._fromDate||'—'),esc(r._toDate||'Open-ended'),esc(r._reason),statusBadge(r._lifeStatus)]},'Use the Event / Week selector to view current, scheduled, expired, all history, or a specific exemption date range.')}`;
+ $('app').innerHTML=`<section class="content-head glass"><h2>Exemptions</h2><p class="sub">Exemption coverage and status for ${esc(selectionLabel)}.</p></section><section class="kpis">${kpiHtml([['Records',rows.length],['Players Affected',players.size],['Active',active],['Scheduled',scheduled],['Expired',expired],['Vacation',rows.filter(r=>/vacation|leave|holiday/i.test(r._reason)).length],['Non-Vacation',rows.filter(r=>!/vacation|leave|holiday/i.test(r._reason)).length]])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>Exemptions by Event</h3></div><div class="panel-body"><div class="chartbox" id="exByEvent"></div></div></div><div class="glass"><div class="panel-head"><h3>Exemptions by Reason</h3></div><div class="panel-body"><div class="chartbox" id="exByReason"></div></div></div></section>${tableCard('Exemption History',rows.sort((a,b)=>String(a._name).localeCompare(String(b._name))),['Player','G-Level','Scope','Event','Event Date','From Date','To Date','Reason','Status'],r=>{const m=memberById(r._id)||memberByName(r._name)||{};return[pLink(r._name||m._name),gBadge(m._g||''),statusBadge(r._scope),esc(r._displayEvent),esc(r._eventDate||'—'),esc(r._fromDate||'—'),esc(r._toDate||'Open-ended'),esc(r._reason),statusBadge(r._lifeStatus)]},'Player exemption history and current status for the selected period.')}`;
  chartPie('exByEvent',byEvent);chartBar('exByReason',byReason)
 }
 
@@ -750,10 +1169,10 @@ function cardHasMeaningfulData(cardEl){
  return !empty;
 }
 function hideEmptyDetailCards(root=document){
- root.querySelectorAll('.intel-grid>.glass,.growth-intel-grid>.glass,.vault-menu>.glass,.g-roster-grid>.glass,.chart-grid>.glass').forEach(cardEl=>{
+ root.querySelectorAll('.intel-grid>.glass,.score-intel-grid>.glass,.growth-intel-grid>.glass,.vault-menu>.glass,.g-roster-grid>.glass,.chart-grid>.glass').forEach(cardEl=>{
   cardEl.classList.toggle('dynamic-hidden',!cardHasMeaningfulData(cardEl));
  });
- root.querySelectorAll('.intel-grid,.growth-intel-grid,.vault-menu,.g-roster-grid,.chart-grid').forEach(container=>{
+ root.querySelectorAll('.intel-grid,.score-intel-grid,.growth-intel-grid,.vault-menu,.g-roster-grid,.chart-grid').forEach(container=>{
   const visible=[...container.children].filter(el=>!el.classList.contains('dynamic-hidden'));
   container.classList.toggle('dynamic-hidden',visible.length===0);
  });
@@ -824,8 +1243,9 @@ function packVariableLists(container,maxColumns=3){
 
  const columns=createPackingColumns(container,colCount);
 
- // Standard variable-height lists use true shortest-column packing.
- // Every next card goes into the currently shortest column.
+ // Global variable-height intelligence standard:
+ // measure visible cards, place taller cards first, then always use the currently shortest column.
+ // This applies across score events, Growth, Vaults, consolidated intelligence and other detail grids.
  measured.forEach(item=>{
   const target=columns.reduce((best,current)=>
    current.height<best.height?current:best
@@ -903,7 +1323,7 @@ function applyDynamicLayout(root=document){
   // Other variable-height detail lists use shortest-column packing.
   targets.variable.forEach(container=>{
    const requested=num(container.dataset.packMax);
-   const maxColumns=requested||(container.classList.contains('vault-menu')?2:3);
+   const maxColumns=requested||3;
    packVariableLists(container,maxColumns);
   });
  }finally{
@@ -953,11 +1373,60 @@ function enableAutomaticLayout(){
  scheduleDynamicLayout(document);
 }
 
-function renderDataHealth(){const rows=Object.entries(state.data).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>({_sheet:k,_count:v.length,_status:v.length?'Loaded':'Empty'}));$('app').innerHTML=`<section class="content-head glass"><h2>Data Health</h2><p class="sub">Live Google Sheets connection check. Each dataset loads independently.</p></section><section class="kpis">${kpiHtml([['Members',state.data.members.length],['Active',activeMembers().length],['Event Setup',state.data.eventSetup.length],['Growth Rows',state.data.growthRaw.length],['Event Rows',allEventRows().length],['Chest Points',state.data.chestpoints.length],['Vault Rows',state.data.vaults.length],['History Rows',state.data.playerStatusHistory.length],['Exemptions',state.data.eventExemptions.length]])}</section>${tableCard('Loaded Tables',rows,['Dataset','Rows','Status'],r=>[esc(r._sheet),fmt(r._count),statusBadge(r._status)])}`}
-function renderAll(){renderShell();renderEventSelector();renderHero();const map={overview:renderOverview,growth:renderGrowth,consolidated:renderConsolidatedPerformance,tinman:()=>renderEventModule('tinman','Tinman','Points'),darkOmens:()=>renderEventModule('darkOmens','Dark Omens','Essence'),trials:()=>renderEventModule('trials','Trials of Olympus','Points'),ragnarok:()=>renderEventModule('ragnarok','Ragnarök','Score'),chestpoints:()=>renderEventModule('chestpoints','Chest Points','Points'),vaults:renderVaults,exemptions:renderExemptions};(map[state.module]||renderOverview)();scheduleDynamicLayout(document)}
-function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent='Player not found.'} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show')} function renderProfile(){const m=memberByName(state.player)||{_name:state.player};$('modalTitle').textContent=m._name;$('profileGrid').innerHTML=kpiHtml([['G-Level',gBadge(m._g||memberG(m._name)||'-')],['Might',short(m._might)],['Vault Level',m._vault||'-'],['Status',m._status||'-'],['Growth',getPlayerGrowthTotal(m._name)===null?'—':short(getPlayerGrowthTotal(m._name))]]);const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];$('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');renderProfileContent()} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
-function profileChart(title,id,sub='Performance history.'){return `<section class="glass"><div class="panel-head"><div><h3>${esc(title)}</h3><p class="sub">${esc(sub)}</p></div></div><div class="panel-body"><div class="chartbox" id="${id}"></div></div></section>`}
-function rowsForPlayer(dataset,name){const kk=key(name);return (state.data[dataset]||[]).filter(r=>key(r._name)===kk).sort((a,b)=>String(a._event||a._week).localeCompare(String(b._event||b._week)))}
+function renderDataHealth(){const rows=Object.entries(state.data).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>({_sheet:k,_count:v.length,_status:v.length?'Loaded':'Empty'}));$('app').innerHTML=`<section class="content-head glass"><h2>Data Health</h2><p class="sub">Platform data availability and record status.</p></section><section class="kpis">${kpiHtml([['Members',state.data.members.length],['Active',activeMembers().length],['Event Setup',state.data.eventSetup.length],['Growth Rows',state.data.growthRaw.length],['Event Rows',allEventRows().length],['Chest Points',state.data.chestpoints.length],['Vault Rows',state.data.vaults.length],['History Rows',state.data.playerStatusHistory.length],['Exemptions',state.data.eventExemptions.length]])}</section>${tableCard('Loaded Tables',rows,['Dataset','Rows','Status'],r=>[esc(r._sheet),fmt(r._count),statusBadge(r._status)])}`}
+function renderAll(){renderShell();renderEventSelector();renderHero();const map={overview:renderOverview,growth:renderGrowth,consolidated:renderConsolidatedPerformance,tinman:()=>renderEventModule('tinman','Tinman','Points'),darkOmens:()=>renderEventModule('darkOmens','Dark Omens','Essence'),trials:()=>renderEventModule('trials','Trials of Olympus','Points'),ragnarok:renderRagnarok,chestpoints:()=>renderEventModule('chestpoints','Chest Points','Points'),vaults:renderVaults,exemptions:renderExemptions};(map[state.module]||renderOverview)();scheduleDynamicLayout(document)}
+function latestPlayerGrowthRecord(name){
+ const kk=key(name);
+ const rows=(state.data.growthRaw||[])
+  .filter(r=>key(r._name)===kk&&r._week)
+  .sort((a,b)=>String(b._week).localeCompare(String(a._week)));
+ return rows[0]||null;
+}
+function latestPlayerHeroLevel(name){
+ const kk=key(name);
+ const rows=(state.data.growthRaw||[])
+  .filter(r=>key(r._name)===kk&&r._week&&String(r._week).localeCompare('2026-08-01')>=0&&num(r._hero)>0)
+  .sort((a,b)=>String(b._week).localeCompare(String(a._week)));
+ return rows.length?fmt(rows[0]._hero):'';
+}
+function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent='Player not found.'} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show')} function profileClassificationBadge(classification){
+ const cls=classification==='Consistent Performer'?'high':
+  classification==='Consistent Underperformer'?'low':
+  classification==='Mixed Performance'?'mid':'limited';
+ return `<span class="performance-score ${cls}">${esc(classification||'Limited Data')}</span>`;
+}
+function renderProfile(){
+ const m=memberByName(state.player)||{_name:state.player};
+ const latestGrowth=latestPlayerGrowthRecord(m._name);
+ const profileG=(latestGrowth&&clean(latestGrowth._g))?latestGrowth._g:(m._g||memberG(m._name)||'-');
+ const profileMight=(latestGrowth&&num(latestGrowth._might)>0)?latestGrowth._might:num(m._might);
+ const totalGrowth=getPlayerGrowthTotal(m._name);
+
+ // Single source of truth: this is the player's row from Consolidated Performance.
+ const consolidatedRow=consolidatedPerformanceRows(true).find(r=>
+  (clean(m._id)&&clean(r._id)&&key(r._id)===key(m._id))||key(r._name)===key(m._name)
+ );
+ const classification=consolidatedRow?consolidatedRow._classification:'Limited Data';
+ const classificationNote=consolidatedRow
+  ?`${consolidatedRow._rate.toFixed(1)}% success · ${consolidatedRow._eligible} eligible records · ${consolidatedRow._coverage} event types`
+  :'Insufficient consolidated performance data';
+
+ $('modalTitle').textContent=m._name;
+ $('profileGrid').innerHTML=kpiHtml([
+  ['G-Level',gBadge(profileG)],
+  ['Might',profileMight>0?short(profileMight):'—'],
+  ['Hero Level',latestPlayerHeroLevel(m._name)||'—'],
+  ['Status',m._status||'-'],
+  ['Growth',totalGrowth===null?'—':short(totalGrowth)],
+  ['Classification',profileClassificationBadge(classification),classificationNote]
+ ]);
+ const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];
+ $('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');
+ renderProfileContent();
+} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
+function profileChart(title,id,sub='Player performance history.'){return `<section class="glass"><div class="panel-head"><div><h3>${esc(title)}</h3><p class="sub">${esc(sub)}</p></div></div><div class="panel-body"><div class="chartbox" id="${id}"></div></div></section>`}
+function rowsForPlayer(dataset,name){const kk=key(name);return (state.data[dataset]||[]).filter(r=>key(r._name)===kk&&rowHasParticipation(dataset,r)).sort((a,b)=>String(a._event||a._week).localeCompare(String(b._event||b._week)))}
+function newestFirst(rows,dateField='_event'){return [...(rows||[])].sort((a,b)=>String(b?.[dateField]||'').localeCompare(String(a?.[dateField]||'')))}
 function seriesFromRows(rows,labelField,valueField){const o={};rows.forEach(r=>{const l=clean(r[labelField]); if(l)o[l]=num(r[valueField])});return o}
 function playerAchievementCards(name){const kk=key(name), best=(arr,prop,dataset)=>Math.max(0,...arr.filter(r=>key(r._name)===kk&&rowHasParticipation(dataset,r)).map(r=>num(r[prop])));const attendance=['tinman','darkOmens','trials','ragnarok','chestpoints','vaults'].reduce((s,k)=>s+(state.data[k]||[]).filter(r=>key(r._name)===kk&&rowHasParticipation(k,r)).length,0);return `<section class="kpis">${kpiHtml([
  ['Best Tinman',short(best(state.data.tinman||[],'_score','tinman'))],
@@ -972,25 +1441,40 @@ function playerAchievementCards(name){const kk=key(name), best=(arr,prop,dataset
 function renderProfileContent(){const n=state.player,k=key(n);let content='', after=()=>{};
  if(state.profileTab==='summary'){
   const rows=playerTimeline(n);const growthRows=state.data.growthRaw.filter(r=>key(r._name)===k).sort((a,b)=>a._week.localeCompare(b._week));
-  content=playerAchievementCards(n)+profileChart('Player Growth Trend','profileSummaryGrowth','Growth over time.')+tableCard('Recent Event History',rows.slice(0,30),['Date','Event','G-Level','Detail','Result','Status'],r=>{if(r._type==='vault')return[esc(r._date),esc(r._event),gBadge(r._g),`Vault Level ${fmt(r._vault)}`,'1 Vault',statusBadge('Built')];return[esc(r._date),esc(r._event),gBadge(r._g),`Target ${fmt(r._target)}`,fmt(r._score),statusBadge(r._status)]},'Recent participation across all recorded events.');
+  content=playerAchievementCards(n)+profileChart('Player Growth Trend','profileSummaryGrowth','Growth over time.')+tableCard('Recent Event History',rows.slice(0,30),['Date','Event','G-Level','Detail','Result','Status'],r=>{if(r._type==='vault')return[esc(r._date),esc(r._event),gBadge(r._g),`Vault Level ${fmt(r._vault)}`,'1 Vault',statusBadge('Built')];if(r._type==='ragnarok')return[esc(r._date),esc(r._event),gBadge(r._g),'Mandatory Participation',fmt(r._score),statusBadge('Participated')];return[esc(r._date),esc(r._event),gBadge(r._g),`Target ${fmt(r._target)}`,fmt(r._score),statusBadge(r._status)]},'Recent participation across all recorded events.');
   after=()=>chartLine('profileSummaryGrowth',seriesFromRows(growthRows,'_week','_might'));
  }else if(state.profileTab==='growth'){
   const rows=state.data.growthRaw.filter(r=>key(r._name)===k).sort((a,b)=>a._week.localeCompare(b._week));
-  const allWeeks=growthWeeks();const enriched=rows.map((r,i)=>{const wi=allWeeks.indexOf(r._week),prevWeek=wi>0?allWeeks[wi-1]:'',prev=prevWeek?(state.data.growthRaw||[]).find(x=>x._week===prevWeek&&key(x._name)===k):null,earlier=rows.slice(0,i),lifecycle=prev?'Active':(earlier.length?'Returned':'New'),change=prev?r._might-prev._might:(earlier.length?r._might-earlier[earlier.length-1]._might:null);return {...r,_lifecycle:lifecycle,_change:change,_lastSeen:prev?prevWeek:(earlier.length?earlier[earlier.length-1]._week:'—')}});content=profileChart('Growth Trend','profileGrowthChart','Growth over time.')+tableCard('Growth & Membership History',enriched,['Week','Might','Lifecycle','Growth','Last Seen'],r=>[esc(r._week),fmt(r._might),statusBadge(r._lifecycle),r._change===null?'New Member':fmt(r._change),esc(r._lastSeen)],'Lifecycle and growth are derived only from Growth Raw Data.');
+  const allWeeks=growthWeeks();const enriched=rows.map((r,i)=>{const wi=allWeeks.indexOf(r._week),prevWeek=wi>0?allWeeks[wi-1]:'',prev=prevWeek?(state.data.growthRaw||[]).find(x=>x._week===prevWeek&&key(x._name)===k):null,earlier=rows.slice(0,i),lifecycle=prev?'Active':(earlier.length?'Returned':'New'),change=prev?r._might-prev._might:(earlier.length?r._might-earlier[earlier.length-1]._might:null);return {...r,_lifecycle:lifecycle,_change:change,_lastSeen:prev?prevWeek:(earlier.length?earlier[earlier.length-1]._week:'—')}});content=profileChart('Growth Trend','profileGrowthChart','Growth over time.')+tableCard('Growth & Membership History',newestFirst(enriched,'_week'),['Week','Might','Lifecycle','Growth','Last Seen'],r=>[esc(r._week),fmt(r._might),statusBadge(r._lifecycle),r._change===null?'New Member':fmt(r._change),esc(r._lastSeen)],'Player growth and membership history, with the latest week shown first.');
   after=()=>chartLine('profileGrowthChart',seriesFromRows(rows,'_week','_might'));
  }else if(state.profileTab==='vaults'){
   const rows=rowsForPlayer('vaults',n);
-  content=profileChart('Vault Level Timeline','profileVaultChart','Vault levels across recorded events.')+tableCard('Vaults History',rows,['Date','Event ID','G-Level','Vault Level','Status'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._vault),statusBadge('Built')],'Vault build history.');
+  content=profileChart('Vault Level Timeline','profileVaultChart','Vault levels across recorded events.')+tableCard('Vaults History',newestFirst(rows),['Date','Event ID','G-Level','Vault Level','Status'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._vault),statusBadge('Built')],'Vault build history, with the latest event shown first.');
   after=()=>chartLine('profileVaultChart',seriesFromRows(rows,'_event','_vault'));
  }else if(state.profileTab==='exemptions'){
-  const member=memberByName(n)||{},rows=(state.data.eventExemptions||[]).filter(r=>exemptionActive(r)&&((r._id&&member._id&&key(r._id)===key(member._id))||key(r._name)===k));
+  const member=memberByName(n)||{},rows=(state.data.eventExemptions||[]).filter(r=>exemptionActive(r)&&((r._id&&member._id&&key(r._id)===key(member._id))||key(r._name)===k)).sort((a,b)=>{const ad=eventDateForExemption(a)||parseAnyDate(a._fromDate),bd=eventDateForExemption(b)||parseAnyDate(b._fromDate);return (bd?bd.getTime():0)-(ad?ad.getTime():0)});
   content=tableCard('Exemption History',rows,['Scope','Event','Event Date','From Date','To Date','Reason','Status'],r=>{const ed=eventDateForExemption(r);return[statusBadge(clean(r._eventId)?'One Event':'All Events'),esc(clean(r._eventId)?(r._eventName||r._eventId):'All Events'),esc(ed?isoDate(ed):'—'),esc(r._fromDate||'—'),esc(r._toDate||'Open-ended'),esc(r._reason),statusBadge(exemptionLifecycleStatus(r))]},'Complete exemption history. Open-ended global exemptions remain active until a To Date is entered.');
  }else{
   const rows=rowsForPlayer(state.profileTab,n);
-  content=profileChart(label(state.profileTab)+' Performance Trend','profileEventChart',label(state.profileTab)+' performance over time.')+tableCard(label(state.profileTab)+' History',rows,['Date','Event ID','G-Level','Target','Score','Status'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._target),fmt(r._score),statusBadge(r._status||((r._score>=r._target)?'Met Target':'Below Target'))],`${label(state.profileTab)} participation history.`);
+  if(state.profileTab==='ragnarok'){
+   content=profileChart('Ragnarök Performance Trend','profileEventChart','Ragnarök score history over time.')+tableCard('Ragnarök History',newestFirst(rows),['Date','Event ID','G-Level','Score','Participation'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._score),statusBadge('Participated')],'Ragnarök participation and score history, with the latest event shown first.');
+  }else{
+   content=profileChart(label(state.profileTab)+' Performance Trend','profileEventChart',label(state.profileTab)+' performance over time.')+tableCard(label(state.profileTab)+' History',newestFirst(rows),['Date','Event ID','G-Level','Target','Score','Status'],r=>[esc(r._event),esc(r._eventId),gBadge(r._g||memberG(r._name)),fmt(r._target),fmt(r._score),statusBadge(r._status||((r._score>=r._target)?'Met Target':'Below Target'))],`${label(state.profileTab)} performance history, with the latest event shown first.`);
+  }
   after=()=>chartLine('profileEventChart',seriesFromRows(rows,'_event','_score'));
  }
  $('profileContent').innerHTML=content; after(); scheduleDynamicLayout($('profileContent'));
 }
 window.openProfile=openProfile;window.renderProfileContent=renderProfileContent;window.setProfileTab=setProfileTab;initLive();
+
+/* Floating Back-to-Top control */
+(function(){
+ const btn=document.getElementById('backToTop');
+ if(!btn)return;
+ const update=()=>btn.classList.toggle('show',window.scrollY>450);
+ window.addEventListener('scroll',update,{passive:true});
+ btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+ update();
+})();
+
 </script></body></html>
