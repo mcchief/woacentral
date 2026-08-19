@@ -82,96 +82,93 @@ function cachedPayloadValid(raw){
  if(!raw||typeof raw!=='object')return false;
  return REQUIRED_DATASETS.every(k=>Array.isArray(raw[k]));
 }
-async function fetchCachedPayload(){
- let lastError='';
- for(let attempt=1;attempt<=4;attempt++){
-  try{
-   const ctrl=new AbortController();
-   const timer=setTimeout(()=>ctrl.abort(),12000);
-   const DATA_URL='https://raw.githubusercontent.com/mcchief/hubtest/main/data.json';
-   const res=await fetch(DATA_URL+'?v='+Date.now(),{
-    cache:'no-store',
-    signal:ctrl.signal
-   });
-   clearTimeout(timer);
-   if(!res.ok)throw new Error('HTTP '+res.status);
-   const raw=await res.json();
-   if(!cachedPayloadValid(raw))throw new Error('Data package validation failed');
-   return raw;
-  }catch(e){
-   lastError=e?.message||'Request failed';
-   if(attempt<4){
-    setStrictLoading('Live data synchronization is taking longer than expected. Retrying automatically…',false);
-    await sleep([1200,2500,4500][attempt-1]||4500);
-   }
+
+/* Production live-data strategy:
+ 1. Use same-origin ./data.json.
+ 2. Never retry in a blocking loop.
+ 3. Keep the last valid dataset in browser cache.
+ 4. Check quietly every 60 seconds and update the open module automatically.
+*/
+const DATA_URL='./data.json';
+const DATA_CACHE_NAME='woa-intelligence-v1';
+const DATA_CACHE_KEY='./__woa_last_valid_data__.json';
+const DATA_LOCAL_KEY='woa_last_valid_data_v1';
+
+async function fetchLatestPayload(timeoutMs=10000){
+ const ctrl=new AbortController();
+ const timer=setTimeout(()=>ctrl.abort(),timeoutMs);
+ try{
+  const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store',signal:ctrl.signal,headers:{'Accept':'application/json'}});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const raw=await res.json();
+  if(!cachedPayloadValid(raw))throw new Error('Data package validation failed');
+  return raw;
+ }finally{clearTimeout(timer)}
+}
+
+async function saveLastValidPayload(raw){
+ if(!cachedPayloadValid(raw))return;
+ const serialized=JSON.stringify(raw);
+ try{
+  if('caches' in window){
+   const cache=await caches.open(DATA_CACHE_NAME);
+   await cache.put(new Request(DATA_CACHE_KEY),new Response(serialized,{headers:{'Content-Type':'application/json'}}));
   }
- }
- throw new Error(lastError||'Unable to load data package');
+ }catch(e){console.warn('Cache Storage save skipped',e)}
+ try{localStorage.setItem(DATA_LOCAL_KEY,serialized)}catch(e){console.warn('Local fallback save skipped',e)}
+}
+
+async function loadLastValidPayload(){
+ try{
+  if('caches' in window){
+   const cache=await caches.open(DATA_CACHE_NAME);
+   const res=await cache.match(new Request(DATA_CACHE_KEY));
+   if(res){const raw=await res.json();if(cachedPayloadValid(raw))return raw}
+  }
+ }catch(e){console.warn('Cache Storage read skipped',e)}
+ try{
+  const stored=localStorage.getItem(DATA_LOCAL_KEY);
+  if(stored){const raw=JSON.parse(stored);if(cachedPayloadValid(raw))return raw}
+ }catch(e){console.warn('Local fallback read skipped',e)}
+ return null;
 }
 
 let AUTO_DATA_CHECK_TIMER=null;
 let LAST_DATA_SIGNATURE='';
 function payloadSignature(raw){
- try{return JSON.stringify(REQUIRED_DATASETS.map(k=>[k,Array.isArray(raw[k])?raw[k].length:-1,raw[k]?.[raw[k].length-1]||null]));}
- catch(e){return String(Date.now())}
+ try{
+  const s=JSON.stringify(raw);let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+  return (h>>>0).toString(16)+':'+s.length;
+ }catch(e){return String(Date.now())}
 }
+
 async function checkForFreshData(){
  try{
-  const raw=await fetchCachedPayload();
+  const raw=await fetchLatestPayload(10000);
+  await saveLastValidPayload(raw);
   const sig=payloadSignature(raw);
-  if(!LAST_DATA_SIGNATURE){
-   LAST_DATA_SIGNATURE=sig;
-   return;
+  if(!LAST_DATA_SIGNATURE){LAST_DATA_SIGNATURE=sig;return}
+  if(sig===LAST_DATA_SIGNATURE)return;
+
+  console.info('New WoA intelligence data detected; applying it immediately.');
+  const currentModule=state.module,currentSelected=state.selected,currentG=state.g,currentPlayer=state.player,currentProfileTab=state.profileTab;
+  const modalOpen=document.getElementById('modal')?.classList.contains('show');
+
+  applyRawPayload(raw);LAST_DATA_SIGNATURE=sig;
+  state.module=currentModule;state.selected=currentSelected;state.g=currentG;state.player=currentPlayer;state.profileTab=currentProfileTab;
+  setupControls();document.getElementById('gFilter').value=state.g||'';renderAll();
+
+  if(modalOpen&&state.player){
+   renderProfile();state.profileTab=currentProfileTab;
+   document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===currentProfileTab));
+   renderProfileContent();document.getElementById('modal')?.classList.add('show');
   }
-  if(sig!==LAST_DATA_SIGNATURE){
-   console.info('New WoA intelligence data detected; applying it immediately.');
-   const currentModule=state.module;
-   const currentSelected=state.selected;
-   const currentG=state.g;
-   const currentPlayer=state.player;
-   const currentProfileTab=state.profileTab;
-   const modalOpen=document.getElementById('modal')?.classList.contains('show');
-
-   applyRawPayload(raw);
-   LAST_DATA_SIGNATURE=sig;
-
-   // Preserve the user's current location and filters while applying fresh data.
-   state.module=currentModule;
-   state.selected=currentSelected;
-   state.g=currentG;
-   state.player=currentPlayer;
-   state.profileTab=currentProfileTab;
-
-   setupControls();
-   document.getElementById('gFilter').value=state.g||'';
-   renderAll();
-
-   if(modalOpen&&state.player){
-    renderProfile();
-    state.profileTab=currentProfileTab;
-    document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===currentProfileTab));
-    renderProfileContent();
-    document.getElementById('modal')?.classList.add('show');
-   }
-
-   const msg=document.getElementById('searchMsg');
-   if(msg)msg.textContent='New live data synchronized automatically.';
-  }
- }catch(e){
-  console.warn('Automatic WoA data freshness check failed',e);
- }
+  const msg=document.getElementById('searchMsg');if(msg)msg.textContent='New live data synchronized automatically.';
+ }catch(e){console.warn('Background data check skipped; current verified data remains active.',e)}
 }
-function startAutomaticDataChecks(){
- if(AUTO_DATA_CHECK_TIMER)clearInterval(AUTO_DATA_CHECK_TIMER);
- AUTO_DATA_CHECK_TIMER=setInterval(checkForFreshData,60*1000);
-}
+function startAutomaticDataChecks(){if(AUTO_DATA_CHECK_TIMER)clearInterval(AUTO_DATA_CHECK_TIMER);AUTO_DATA_CHECK_TIMER=setInterval(checkForFreshData,60*1000)}
 
-function mapMember(r){return{_id:field(r,['Player ID','ID']),_name:field(r,['Official Player Name','Player Name','Name','Player']),_g:field(r,['Current G-Level','G-Level','G Level']),_vault:num(field(r,['Current Vault Level','Vault Level'])),_hero:num(field(r,['Current Hero Level','Hero Level','Hero'])),_might:num(field(r,['Current Might','Might'])),_status:field(r,['Current Status','Status'])||'Active',_join:field(r,['Join Date','Date Joined']),_left:field(r,['Date Left','Left Date'])}}
-function mapEventRow(r){return{_eventId:field(r,['Event ID','EventID']),_event:field(r,['Event Date','Date','Week']),_available:num(field(r,['Available Members','Eligible Members'])),_rank:num(field(r,['Rank'])),_name:field(r,['Player Name','Official Player Name','Name','Player']),_id:field(r,['Player ID','ID']),_g:field(r,['G-Level','G Level','Current G-Level']),_vault:num(field(r,['Vault Level','Current Vault Level'])),_might:num(field(r,['Current Might','Might'])),_target:num(field(r,['Target','Required','Minimum'])),_score:num(field(r,['Result / Score','Score','Points','Essence','Result','Value'])),_status:field(r,['Result Status','Status','Current Status']),_buildTime:field(r,['Local Build Time','Build Time']),_resetOffset:field(r,['Reset Offset']),_utcOffset:field(r,['UTC Offset']),_chests:num(field(r,['Chests','Chest Count']))}}
-function mapEventSetup(r){return{_id:field(r,['Event ID','EventID']),_name:field(r,['Event Name','Name']),_type:field(r,['Event Type','Type']),_date:field(r,['Event Date','Date']),_target:num(field(r,['Target','Default Target'])),_available:num(field(r,['Available Members','Eligible Members']))}}
-function normalizeWeek(v){v=clean(v);if(!v)return'';let d=parseAnyDate(v);if(d&&!isNaN(d))return d.toISOString().slice(0,10);return v}
-function mapGrowth(r){return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_week:normalizeWeek(field(r,['Week','Week Start','Event Date','Date'])),_might:num(field(r,['Current Might','Might','Total Might'])),_hero:num(field(r,['Hero Level','Current Hero Level','Hero'])),_g:field(r,['G-Level','G Level','Current G-Level'])}}
-function mapEventExemption(r){return{_eventId:field(r,['Event ID','EventID','Event Id']),_event:field(r,['Event Date','Date','Week']),_eventName:field(r,['Event Name','Name','Event','Event Type']),_id:field(r,['Player ID','ID','Player Id']),_name:field(r,['Player Name','Official Player Name','Name','Player']),_reason:field(r,['Reason','Exemption Reason','Notes','Comment']),_fromDate:field(r,['From Date','Start Date','Date From','Exemption From']),_toDate:field(r,['To Date','End Date','Date To','Exemption To']),_status:field(r,['Status','Exemption Status','Current Status'])||'Active'}}
 function applyRawPayload(raw){
  state.data={
   members:(raw.members||[]).map(mapMember).filter(r=>r._name),
@@ -188,42 +185,38 @@ function applyRawPayload(raw){
 }
 
 async function initLive(isBackgroundRefresh=false){
- const app=document.getElementById('app'),
-       searchMsg=document.getElementById('searchMsg'),
-       retryBtn=document.getElementById('strictRetryBtn');
+ const app=document.getElementById('app'),searchMsg=document.getElementById('searchMsg'),retryBtn=document.getElementById('strictRetryBtn');
+ if(retryBtn)retryBtn.onclick=()=>initLive();
+ setStrictLoading('Synchronizing live intelligence…',false);
+ searchMsg.textContent='Synchronizing the latest WoA intelligence…';
+
+ let raw=null,source='live';
+ try{raw=await fetchLatestPayload(10000);await saveLastValidPayload(raw)}
+ catch(liveError){console.warn('Initial live request delayed; using last verified browser dataset if available.',liveError);source='cached';raw=await loadLastValidPayload()}
+
  try{
-  if(retryBtn)retryBtn.onclick=()=>initLive();
-  setStrictLoading('Synchronizing live intelligence…',false);
-  searchMsg.textContent='Synchronizing the latest WoA intelligence…';
-  app.innerHTML='';
-
-  const raw=await fetchCachedPayload();
-  LAST_DATA_SIGNATURE=payloadSignature(raw);
-
-  applyRawPayload(raw);
-
+  if(!cachedPayloadValid(raw))throw new Error('No verified intelligence dataset is currently available');
+  LAST_DATA_SIGNATURE=payloadSignature(raw);applyRawPayload(raw);
   const requiredMapped=['members','eventSetup','growthRaw','tinman','darkOmens','trials','ragnarok','chestpoints','vaults'];
   const missing=requiredMapped.filter(k=>!Array.isArray(state.data[k])||state.data[k].length===0);
   if(missing.length)throw new Error('Mapped data package is incomplete');
 
-  setupControls();
-  renderAll();
-  enableAutomaticLayout();
-  updateHealthWarnings();
-  searchMsg.textContent='WoA intelligence is live and fully synchronized.';
-  unlockStrictDashboard();
-  startAutomaticDataChecks();
-
+  setupControls();renderAll();enableAutomaticLayout();updateHealthWarnings();
+  searchMsg.textContent=source==='live'?'WoA intelligence is live and fully synchronized.':'WoA intelligence loaded from the last verified snapshot. Live synchronization will continue automatically.';
+  unlockStrictDashboard();startAutomaticDataChecks();
+  if(source==='cached')setTimeout(checkForFreshData,3000);
  }catch(e){
-  console.error('WoA cached-data startup error',e);
-  console.error('WoA cached-data diagnostics',{
-   message:e?.message||String(e),
-   dataKeys:Object.keys(state.data||{}),
-   mappedCounts:Object.fromEntries(Object.entries(state.data||{}).map(([k,v])=>[k,Array.isArray(v)?v.length:null]))
-  });
+  console.error('WoA startup error',e);
+  console.error('WoA startup diagnostics',{message:e?.message||String(e),dataKeys:Object.keys(state.data||{}),mappedCounts:Object.fromEntries(Object.entries(state.data||{}).map(([k,v])=>[k,Array.isArray(v)?v.length:null]))});
   blockStrictDashboard();
  }
 }
+function mapMember(r){return{_id:field(r,['Player ID','ID']),_name:field(r,['Official Player Name','Player Name','Name','Player']),_g:field(r,['Current G-Level','G-Level','G Level']),_vault:num(field(r,['Current Vault Level','Vault Level'])),_hero:num(field(r,['Current Hero Level','Hero Level','Hero'])),_might:num(field(r,['Current Might','Might'])),_status:field(r,['Current Status','Status'])||'Active',_join:field(r,['Join Date','Date Joined']),_left:field(r,['Date Left','Left Date'])}}
+function mapEventRow(r){return{_eventId:field(r,['Event ID','EventID']),_event:field(r,['Event Date','Date','Week']),_available:num(field(r,['Available Members','Eligible Members'])),_rank:num(field(r,['Rank'])),_name:field(r,['Player Name','Official Player Name','Name','Player']),_id:field(r,['Player ID','ID']),_g:field(r,['G-Level','G Level','Current G-Level']),_vault:num(field(r,['Vault Level','Current Vault Level'])),_might:num(field(r,['Current Might','Might'])),_target:num(field(r,['Target','Required','Minimum'])),_score:num(field(r,['Result / Score','Score','Points','Essence','Result','Value'])),_status:field(r,['Result Status','Status','Current Status']),_buildTime:field(r,['Local Build Time','Build Time']),_resetOffset:field(r,['Reset Offset']),_utcOffset:field(r,['UTC Offset']),_chests:num(field(r,['Chests','Chest Count']))}}
+function mapEventSetup(r){return{_id:field(r,['Event ID','EventID']),_name:field(r,['Event Name','Name']),_type:field(r,['Event Type','Type']),_date:field(r,['Event Date','Date']),_target:num(field(r,['Target','Default Target'])),_available:num(field(r,['Available Members','Eligible Members']))}}
+function normalizeWeek(v){v=clean(v);if(!v)return'';let d=parseAnyDate(v);if(d&&!isNaN(d))return d.toISOString().slice(0,10);return v}
+function mapGrowth(r){return{_name:field(r,['Player Name','Official Player Name','Name','Player']),_week:normalizeWeek(field(r,['Week','Week Start','Event Date','Date'])),_might:num(field(r,['Current Might','Might','Total Might'])),_hero:num(field(r,['Hero Level','Current Hero Level','Hero'])),_g:field(r,['G-Level','G Level','Current G-Level'])}}
+function mapEventExemption(r){return{_eventId:field(r,['Event ID','EventID','Event Id']),_event:field(r,['Event Date','Date','Week']),_eventName:field(r,['Event Name','Name','Event','Event Type']),_id:field(r,['Player ID','ID','Player Id']),_name:field(r,['Player Name','Official Player Name','Name','Player']),_reason:field(r,['Reason','Exemption Reason','Notes','Comment']),_fromDate:field(r,['From Date','Start Date','Date From','Exemption From']),_toDate:field(r,['To Date','End Date','Date To','Exemption To']),_status:field(r,['Status','Exemption Status','Current Status'])||'Active'}}
 const MODULES=[['overview','🏠 Overview'],['growth','📈 Growth'],['consolidated','🏆 Consolidated Performance'],['tinman','⚔ Tinman'],['darkOmens','🌑 Dark Omens'],['trials','🏛 Trials'],['ragnarok','🪓 Ragnarök'],['chestpoints','🎯 Chest Points'],['vaults','🏰 Vaults'],['exemptions','🛡 Exemptions']];
 const state={module:'overview',selected:'',g:'',profileTab:'summary',player:'',data:{}};
 const $=id=>document.getElementById(id); const clean=s=>(s??'').toString().trim(); const key=s=>clean(s).toUpperCase().replace(/\s+/g,''); const num=v=>{let n=parseFloat(clean(v).replace(/,/g,''));return isNaN(n)?0:n}; const fmt=n=>Number(num(n)||0).toLocaleString(); const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0%'; const short=n=>{n=num(n); if(Math.abs(n)>=1e9)return(n/1e9).toFixed(2)+'B'; if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+'M'; if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+'K'; return fmt(n)}; const esc=s=>clean(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); const escAttr=s=>esc(s).replace(/'/g,'&#39;');
@@ -234,7 +227,10 @@ const gBadge=g=>{const v=clean(g)||'Unknown';return `<span class="g-badge ${gCla
 function playerWithExemptTag(name,isExempt=false,label='Exempt'){return `${pLink(name)}${isExempt?`<span class="exempt-tag">🔵 ${esc(label)}</span>`:''}`}
 const field=(o,names)=>{if(!o)return'';for(const n of names){if(Object.prototype.hasOwnProperty.call(o,n)&&clean(o[n])!=='')return clean(o[n])}const idx=Object.fromEntries(Object.keys(o).map(k=>[canonicalHeader(k),k]));for(const n of names){const k=idx[canonicalHeader(n)];if(k&&clean(o[k])!=='')return clean(o[k])}return ''}; const statusBadge=s=>{s=clean(s)||'-'; let cls=/expired/i.test(s)?'expired':/scheduled/i.test(s)?'scheduled':/returned/i.test(s)?'returned':/^new/i.test(s)?'new':/met|active/i.test(s)?'met':/left|below|fail|missing/i.test(s)?'fail':/pending|inactive/i.test(s)?'warnb':'warnb'; return `<span class="badge ${cls}">${esc(s)}</span>`}; const pLink=n=>`<a class="player" onclick="openProfile('${escAttr(n)}')">${esc(n)}</a>`;
 function normalize(){return state.data}
-function activeMembers(){return state.data.members.filter(m=>!/(left|removed)/i.test(m._status))} function memberByName(n){const k=key(n);return state.data.members.find(m=>key(m._name)===k)||state.data.members.find(m=>key(m._name).includes(k))} function memberById(id){const k=key(id);return k?state.data.members.find(m=>key(m._id)===k):null} function memberG(n){return memberByName(n)?._g||''} function filteredRows(rows){return state.g?rows.filter(r=>(r._g||memberG(r._name))===state.g):rows} function selectedRows(rows){let r=filteredRows(rows);if(state.selected)r=r.filter(x=>x._eventId===state.selected||x._event===state.selected||x._week===state.selected);return r} function eventMeta(id){return state.data.eventSetup.find(e=>e._id===id)||{}}
+function normalizedMemberStatus(v){return clean(v).toLowerCase()}
+function isActiveCurrentStatus(v){return normalizedMemberStatus(v)==='active'}
+function isRotationOrInactiveStatus(v){return /^(rotation|inactive|pending)$/.test(normalizedMemberStatus(v))}
+function activeMembers(){return state.data.members.filter(m=>isActiveCurrentStatus(m._status))} function memberByName(n){const k=key(n);return state.data.members.find(m=>key(m._name)===k)||state.data.members.find(m=>key(m._name).includes(k))} function memberById(id){const k=key(id);return k?state.data.members.find(m=>key(m._id)===k):null} function memberG(n){return memberByName(n)?._g||''} function filteredRows(rows){return state.g?rows.filter(r=>(r._g||memberG(r._name))===state.g):rows} function selectedRows(rows){let r=filteredRows(rows);if(state.selected)r=r.filter(x=>x._eventId===state.selected||x._event===state.selected||x._week===state.selected);return r} function eventMeta(id){return state.data.eventSetup.find(e=>e._id===id)||{}}
 function startOfDay(d){if(!(d instanceof Date)||isNaN(d))return null;return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
 function todayDate(){return startOfDay(new Date())}
 function eventDateForExemption(x){const meta=clean(x?._eventId)?eventMeta(x._eventId):{};return startOfDay(parseAnyDate(meta._date)||parseAnyDate(x?._event)||parseAnyDate(x?._fromDate))}
@@ -342,7 +338,7 @@ function allEventRows(){return ['tinman','darkOmens','trials','ragnarok','chestp
 function growthWeeks(){return [...new Set((state.data.growthRaw||[]).map(r=>r._week).filter(Boolean))].sort()}
 function latestGrowthWeek(){const w=growthWeeks();return w.length?w[w.length-1]:''}
 function latestGrowthRows(){const w=latestGrowthWeek();return w?(state.data.growthRaw||[]).filter(r=>r._week===w):[]}
-function isActiveGrowthPlayer(r){const m=memberByName(r._name);return !m || !/(left|removed|inactive|pending)/i.test(m._status)}
+function isActiveGrowthPlayer(r){const m=memberByName(r._name);return !m||isActiveCurrentStatus(m._status)}
 function latestGrowthSnapshot(){return latestGrowthRows().filter(isActiveGrowthPlayer).map(r=>{const m=memberByName(r._name)||{};return {...r,_g:m._g||memberG(r._name),_hero:r._hero||m._hero||0,_vault:m._vault||0,_status:m._status||'Active'}})}
 function latestGrowthTotal(){const snap=latestGrowthSnapshot();return snap.length?snap.reduce((s,r)=>s+r._might,0):activeRosterMembers().reduce((s,m)=>s+m._might,0)}
 function renderHero(){const current=activeRosterMembers(),active=current,total=latestGrowthTotal(),weeks=growthWeeks();$('heroCards').innerHTML=kpiHtml([['Current Members',current.length],['Active Players',active.length],['Clan Might',short(total)],['Growth Weeks',weeks.length]])}
@@ -351,21 +347,31 @@ function memberIsActiveForDate(name,eventDate){
  const m=memberByName(name);
  if(!m)return true;
 
+ const status=normalizedMemberStatus(m._status);
  const join=startOfDay(parseAnyDate(m._join));
  const left=startOfDay(parseAnyDate(m._left));
  const date=startOfDay(eventDate instanceof Date?eventDate:parseAnyDate(eventDate));
 
- // Current view: only currently eligible members.
- if(!date)return !/(left|removed|inactive|pending)/i.test(clean(m._status));
+ // Rotation, Inactive and Pending are never accountable/eligible in event modules.
+ // This rule applies consistently to Tinman, Dark Omens, Trials/Olympus,
+ // Ragnarök, Chest Points, Vaults, repeat-risk logic and Consolidated Performance.
+ if(isRotationOrInactiveStatus(status))return false;
 
- // Historical view: membership is determined by the actual join/leave period.
- // A player is included from Join Date through Leave Date, inclusive.
+ // Current view: only Current Status = Active is eligible.
+ if(!date)return status==='active';
+
+ // Historical handling for former members:
+ // Left/Removed players may still count for an event that occurred while they
+ // were members, provided the event falls within Join Date -> Date Left.
  if(join&&date.getTime()<join.getTime())return false;
  if(left&&date.getTime()>left.getTime())return false;
 
- // A status without a usable departure date cannot safely be projected backwards.
- if(!left&&/(left|removed)/i.test(clean(m._status)))return false;
- if(/pending/i.test(clean(m._status)))return false;
+ if(/^(left clan|left|removed)$/.test(status)){
+  return !!left && date.getTime()<=left.getTime();
+ }
+
+ // Any other non-Active operational status is not accountable.
+ if(status!=='active')return false;
 
  return true;
 }
@@ -404,20 +410,20 @@ const EXEC_COPY={
  ragnarok:'Current Ragnarök participation, score performance and player rankings.',
  chestpoints:'Current Chest Points contribution, participation and target performance.',
  vaults:'Current Vault building participation, completion and compliance intelligence.',
- exemptions:'Current leadership view of active, scheduled and historical event exemptions.',
- nonBuilders:'Eligible players who have not built a Vault for this event.',
+ exemptions:'Current leadership view of event exemptions. Active and scheduled views include Active members only; historical views retain prior records for audit.',
+ nonBuilders:'Active eligible players who have not built a Vault for this event. Rotation and Inactive members are excluded.',
  mostVaults:'Players with the highest number of recorded Vault builds.',
  repeatVaultRisk:'Players who missed two or more eligible vault events while they were clan members. Join dates, departure dates and exemptions are enforced.',
  development:'Players currently requiring development focus based on recent growth.',
  improvers:'Players with the strongest growth during this period.',
  decliners:'Players with the largest growth decline during this period.',
- underperformers:'Every eligible non-exempt player below the required event target, ranked worst percentage achieved first.',
+ underperformers:'Every Active eligible non-exempt player below the required event target, ranked worst percentage achieved first. Rotation and Inactive members are excluded.',
  outstanding:'Eligible non-exempt players without a recorded result for this event.',
  topPerformers:'Highest-performing players for this event.',
  repeatRisk:'Non-exempt players below target across multiple eligible events.'
 };
-function activeRosterMembers(){return state.data.members.filter(m=>!/(left|removed|inactive|pending)/i.test(m._status))}
-function isCurrentEligibleMember(m){return m&&!/(left|removed|inactive|pending)/i.test(m._status)}
+function activeRosterMembers(){return state.data.members.filter(m=>isActiveCurrentStatus(m._status))}
+function isCurrentEligibleMember(m){return !!m&&isActiveCurrentStatus(m._status)}
 function renderOverview(){const a=activeRosterMembers(),members=state.data.members,snap=latestGrowthSnapshot(),roster=snap.length?snap:a.map(m=>({_name:m._name,_g:m._g,_hero:m._hero||0,_vault:m._vault,_status:m._status,_might:m._might})),total=latestGrowthTotal(),avg=roster.length?total/roster.length:0,high=Math.max(0,...roster.map(m=>m._might)),low=Math.min(...roster.map(m=>m._might).filter(v=>num(v)>0)),latest=latestGrowthWeek();$('app').innerHTML=`<section class="content-head glass"><h2>Overview</h2><p class="sub">${EXEC_COPY.overview}${latest?' Latest might snapshot: '+esc(latest)+'.':''}</p></section><section class="kpis">${kpiHtml([['Total Clan Might',short(total)],['Active Players',a.length],['Current Members',a.length],['Average Might',short(avg)],['Highest Might',short(high)],['Lowest Might',isFinite(low)?short(low):'-'],['Growth Snapshot',latest||'-']])}</section><section class="chart-grid"><div class="glass"><div class="panel-head"><h3>G-Level Distribution</h3></div><div class="panel-body"><div class="chartbox" id="c1"></div></div></div><div class="glass"><div class="panel-head"><h3>Clan Might Trend</h3></div><div class="panel-body"><div class="chartbox" id="c2"></div></div></div></section>${tableCard('Top 10 Strongest Active Players',[...roster].sort((x,y)=>y._might-x._might).slice(0,10),['Player','G-Level','Might','Hero Level','Status'],r=>[pLink(r._name),gBadge(r._g),fmt(r._might),r._hero?fmt(r._hero):'—',statusBadge(r._status)],'Strongest active players based on the latest available Might snapshot.')}`;chartPie('c1',groupCount(a,'_g'));chartLine('c2',growthTrend())}
 function growthPlayerHistory(name, beforeWeek=''){const kk=key(name);return (state.data.growthRaw||[]).filter(r=>key(r._name)===kk&&r._week&&(!beforeWeek||String(r._week).localeCompare(String(beforeWeek))<0)).sort((a,b)=>String(a._week).localeCompare(String(b._week)))}
 function growthLifecycleSnapshot(selectedWeek){const weeks=growthWeeks(),idx=weeks.indexOf(selectedWeek),prevWeek=idx>0?weeks[idx-1]:'';const currentRows=growthRowsForWeek(selectedWeek),previousRows=prevWeek?growthRowsForWeek(prevWeek):[];const currentMap=new Map(currentRows.map(r=>[key(r._name),r]));const previousMap=new Map(previousRows.map(r=>[key(r._name),r]));const earlierByPlayer=new Map(),firstByPlayer=new Map();(state.data.growthRaw||[]).forEach(r=>{if(!r._week||String(r._week).localeCompare(String(selectedWeek))>0)return;const kk=key(r._name);if(!kk)return;const first=firstByPlayer.get(kk);if(!first||String(r._week).localeCompare(String(first._week))<0)firstByPlayer.set(kk,r);if(String(r._week).localeCompare(String(selectedWeek))<0){const last=earlierByPlayer.get(kk);if(!last||String(r._week).localeCompare(String(last._week))>0)earlierByPlayer.set(kk,r)}});let current=currentRows.map(r=>{const kk=key(r._name),prev=previousMap.get(kk),last=earlierByPlayer.get(kk),first=firstByPlayer.get(kk);let lifecycle='New',growth=null,growthPct=null,lastSeen='—',growthLabel='New Member';if(prev){lifecycle='Active';growth=r._might-prev._might;growthPct=prev._might>0?(growth/prev._might)*100:null;lastSeen=prevWeek;growthLabel=fmt(growth)}else if(last){lifecycle='Returned';growth=r._might-last._might;lastSeen=last._week;growthLabel=fmt(growth)+' since '+last._week}return {...r,_g:r._g||memberG(r._name),_lifecycle:lifecycle,_change:growth,_growthPct:growthPct,_previousMight:prev?prev._might:null,_growthLabel:growthLabel,_lastSeen:lastSeen,_firstWeek:first?first._week:r._week,_total:first?r._might-first._might:0}});const leftMap=new Map();previousRows.forEach(r=>{const kk=key(r._name);if(!kk||currentMap.has(kk)||leftMap.has(kk))return;leftMap.set(kk,{...r,_g:r._g||memberG(r._name),_lifecycle:'Left',_change:null,_lastSeen:prevWeek})});const left=[...leftMap.values()];return {weeks,selectedWeek,prevWeek,current,left,active:current.filter(r=>r._lifecycle==='Active'),newMembers:current.filter(r=>r._lifecycle==='New'),returned:current.filter(r=>r._lifecycle==='Returned')}}
@@ -572,6 +578,8 @@ const CONSOLIDATED_EVENTS=[
 
 function currentExemptionsForMember(member){
  const today=todayDate();
+ const currentMember=memberById(member?._id)||memberByName(member?._name)||member;
+ if(currentMember&&!isActiveCurrentStatus(currentMember._status))return [];
  return (state.data.eventExemptions||[]).filter(x=>{
   if(!exemptionActive(x))return false;
   const pid=key(member?._id), pname=key(member?._name);
@@ -983,12 +991,41 @@ function renderVaults(){
 
 function exemptionScopeLabel(x){return clean(x._eventId)?(clean(x._eventName)||clean(x._eventId)):'All Events'}
 function exemptionRowsForSelection(){
- let rows=(state.data.eventExemptions||[]).filter(x=>exemptionActive(x)&&(x._id||x._name)&&x._reason).map(x=>{const eventDate=eventDateForExemption(x);return {...x,_scope:clean(x._eventId)?'One Event':'All Events',_displayEvent:exemptionScopeLabel(x),_lifeStatus:exemptionLifecycleStatus(x),_eventDate:eventDate?isoDate(eventDate):''}});
+ let rows=(state.data.eventExemptions||[])
+  .filter(x=>exemptionActive(x)&&(x._id||x._name)&&x._reason)
+  .map(x=>{
+   const eventDate=eventDateForExemption(x);
+   const member=memberById(x._id)||memberByName(x._name)||null;
+   return {
+    ...x,
+    _scope:clean(x._eventId)?'One Event':'All Events',
+    _displayEvent:exemptionScopeLabel(x),
+    _lifeStatus:exemptionLifecycleStatus(x),
+    _eventDate:eventDate?isoDate(eventDate):'',
+    _memberStatus:clean(member?._status),
+    _memberActive:member?isActiveCurrentStatus(member._status):true
+   };
+  });
+
  const sel=clean(state.selected)||'status:active';
- if(sel==='status:active')rows=rows.filter(r=>r._lifeStatus==='Active');
- else if(sel==='status:scheduled')rows=rows.filter(r=>r._lifeStatus==='Scheduled');
- else if(sel==='status:expired')rows=rows.filter(r=>r._lifeStatus==='Expired');
- else if(sel.startsWith('range:')){const [,s,e]=sel.split(':');const start=startOfDay(parseAnyDate(s)),end=e==='open'?todayDate():startOfDay(parseAnyDate(e));if(start&&end)rows=rows.filter(r=>periodOverlaps(r,start,end))}
+
+ // Current and scheduled exemption views are operational views:
+ // only currently Active members belong here.
+ if(sel==='status:active'){
+  rows=rows.filter(r=>r._lifeStatus==='Active'&&r._memberActive);
+ }else if(sel==='status:scheduled'){
+  rows=rows.filter(r=>r._lifeStatus==='Scheduled'&&r._memberActive);
+ }else if(sel==='status:expired'){
+  // Historical audit remains available, including former/inactive members.
+  rows=rows.filter(r=>r._lifeStatus==='Expired');
+ }else if(sel==='status:all'){
+  // Full audit history intentionally retains all historical exemption records.
+ }else if(sel.startsWith('range:')){
+  const [,s,e]=sel.split(':');
+  const start=startOfDay(parseAnyDate(s)),end=e==='open'?todayDate():startOfDay(parseAnyDate(e));
+  if(start&&end)rows=rows.filter(r=>periodOverlaps(r,start,end));
+ }
+
  return rows;
 }
 function renderExemptions(){
