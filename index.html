@@ -1064,18 +1064,20 @@ function activeExemptionReason(member){
  return reasons.join(', ');
 }
 function consolidatedDisplayClass(r){
- // Exempt players may be classified positively from Observed Performance,
- // but they are never labelled Consistent Underperformer.
+ // One evidence standard for everyone: at least 3 assessed/observed records.
+ // Active exemptions remain fully protected from accountability penalties,
+ // but observed participation may still establish a performance classification.
  if(r._activeExemption){
-  if(r._observedRecords>0 && r._observedRate>=80)return 'Consistent Performer';
-  if(r._observedRecords>0 && r._observedRate>40)return 'Mixed Performance';
-  return 'Exempted / Limited';
+  if((r._observedRecords||0)<3)return 'Exempted / Limited';
+  if(r._observedRate>=80)return 'Consistent Performer';
+  if(r._observedRate<=40)return 'Consistent Underperformer';
+  return 'Mixed Performance';
  }
  return r._classification;
 }
 function consolidatedDisplayScore(r){
  const cls=consolidatedDisplayClass(r);
- if(r._activeExemption && (cls==='Consistent Performer'||cls==='Mixed Performance'))return r._observedRate;
+ if(r._activeExemption && cls!=='Exempted / Limited')return r._observedRate;
  return r._rate;
 }
 function consolidatedSortGroup(r){
@@ -1101,7 +1103,7 @@ function consolidatedClassificationCell(r){
  const displayClass=consolidatedDisplayClass(r);
  if(r._activeExemption){
   const reason=r._exemptReason?` title="${escAttr(r._exemptReason)}"`:'';
-  if(displayClass==='Consistent Performer'||displayClass==='Mixed Performance'){
+  if(displayClass!=='Exempted / Limited'){
    return `${consolidatedBadge(displayClass)}<span class="exempt-tag"${reason}>🔵 Exempt</span>`;
   }
   return `<span class="exempt-tag"${reason}>🔵 Exempt</span>`;
@@ -1230,7 +1232,9 @@ function consolidatedPerformanceRows(){
   const coverage=r._eventTypes.size;
   const rate=r._eligible?r._success/r._eligible*100:0;
   const observedRate=r._observedRecords?r._observedSuccess/r._observedRecords*100:0;
-  const limited=r._eligible<5||coverage<3;
+  // Minimum classification evidence: 3 eligible assessed records.
+  // Event-type coverage is retained for reporting only; it is not a classification gate.
+  const limited=r._eligible<3;
   const classification=limited?'Limited Data':rate>=80?'Consistent Performer':rate<=40?'Consistent Underperformer':'Mixed Performance';
   const member={_id:r._id,_name:r._name};
   const activeEx=currentExemptionsForMember(member);
@@ -1284,7 +1288,7 @@ function renderConsolidatedPerformance(){
   ['Active Players Assessed',rows.length,'Active roster'],
   ['Consistent Performers',performers.length,'Includes exempt players qualifying through 80%+ Observed Performance'],
   ['Mixed Performance',mixed.length,'Includes exempt players qualifying through Observed Performance'],
-  ['Consistent Underperformers',under.length,'60%+ failed eligible records, with at least 5 records across 3 event types'],
+  ['Consistent Underperformers',under.length,'Players failing at least 60% of eligible records with sufficient event coverage.'],
   ['Exempted / Limited',exemptLimited.length,'Exempt players without sufficient observed performance for Performer or Mixed classification'],
   ['Limited Data',limited.length,'Insufficient eligible non-exempt event coverage'],
   ['Overall Success',overallRate.toFixed(1)+'%','Success rate across eligible non-exempt records']
@@ -1299,7 +1303,7 @@ function renderConsolidatedPerformance(){
 
  <section class="intel-grid auto-pack" data-pack-max="2">
   ${card('Consistent Performers','All Consistent Performers ranked together. Exempt performers are classified using Observed Performance and remain protected from accountability penalties.',performers.length?`<ul class="list">${performers.slice(0,10).map(r=>`<li><span>${pLink(r._name)}${r._activeExemption?'<span class="exempt-tag">🔵 Exempt</span>':''}</span><span>${gBadge(r._g)}</span><span>${consolidatedDisplayScore(r).toFixed(1)}%</span></li>`).join('')}</ul>`:'<div class="empty">No players currently meet the Consistent Performer threshold.</div>',performers.length+' players')}
-  ${card('Consistent Underperformers','Players failing at least 60% of eligible records with sufficient event coverage.',under.length?`<ul class="list">${under.slice(0,10).map(r=>`<li><span>${pLink(r._name)}</span><span>${gBadge(r._g)}</span><span>${r._rate.toFixed(1)}%</span></li>`).join('')}</ul>`:'<div class="empty">No players currently meet the Consistent Underperformer threshold.</div>',under.length+' players')}
+  ${card('Consistent Underperformers','Players failing at least 60% of eligible records with sufficient event coverage.',under.length?`<ul class="list">${under.slice(0,10).map(r=>`<li><span>${pLink(r._name)}${r._activeExemption?'<span class="exempt-tag">🔵 Exempt</span>':''}</span><span>${gBadge(r._g)}</span><span>${consolidatedDisplayScore(r).toFixed(1)}%</span></li>`).join('')}</ul>`:'<div class="empty">No players currently meet the Consistent Underperformer threshold.</div>',under.length+' players')}
  </section>
 
  ${tableCard(
@@ -1308,13 +1312,13 @@ function renderConsolidatedPerformance(){
   ['Rank','Player','G-Level','Classification','Accountability Score','Observed Performance','Successful','Failed','Eligible Records','Exempt Records','Exempt Participated','Event Types','Tinman','Dark Omens','Trials','Ragnarök','Chest Points','Vaults'],
   (r,i)=>[
    i+1,pLink(r._name),gBadge(r._g),consolidatedClassificationCell(r),
-   scorePill(r._rate,r._eligible===0||r._limited,r._activeExemption&&(consolidatedDisplayClass(r)==='Consistent Performer'||consolidatedDisplayClass(r)==='Mixed Performance')),
+   scorePill(r._rate,r._eligible===0||r._limited,r._activeExemption),
    r._observedRecords?`<span class="performance-score ${r._observedRate>=80?'high':r._observedRate<=40?'low':'mid'}">${r._observedRate.toFixed(1)}%</span>`:'<span class="performance-score limited">—</span>',
    fmt(r._success),fmt(r._fail),fmt(r._eligible),fmt(r._exemptRecords),fmt(r._exemptParticipated),fmt(r._coverage),
    matrixCell(r._events.tinman),matrixCell(r._events.darkOmens),matrixCell(r._events.trials),
    matrixCell(r._events.ragnarok),matrixCell(r._events.chestpoints),matrixCell(r._events.vaults)
   ],
-  'Players are ordered by classification: Consistent Performer, Mixed Performance, Consistent Underperformer, then Exempted / Limited. Exempt players who qualify as Performer or Mixed through Observed Performance are ranked within that classification while remaining fully protected from penalties.'
+  'Players are ordered by classification: Consistent Performer, Mixed Performance, Consistent Underperformer, then Exempted / Limited. Exempt players require at least 3 observed records before classification and remain fully protected from accountability penalties.'
  )}
  `;
  chartPie('conClass',classificationCounts);
