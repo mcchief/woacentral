@@ -74,6 +74,17 @@ html[lang="ar"] .chartbox .empty{direction:rtl;text-align:right}
 html[lang="ar"] .floating-up-btn{right:22px;left:auto}
 html[lang="ar"] .modal-up-btn{right:18px;left:auto}
 
+
+
+/* Global sortable tables — display-only enhancement. */
+th.woa-sortable{cursor:pointer;user-select:none;padding-right:28px;position:sticky}
+th.woa-sortable::after{content:'↕';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;line-height:1;color:#8fb6d8;opacity:.65}
+th.woa-sortable[data-sort-dir="asc"]::after{content:'▲';color:#7dd3fc;opacity:1}
+th.woa-sortable[data-sort-dir="desc"]::after{content:'▼';color:#7dd3fc;opacity:1}
+th.woa-sortable:focus-visible{outline:2px solid rgba(125,211,252,.85);outline-offset:-3px}
+html[lang="ar"] th.woa-sortable{padding-right:12px;padding-left:28px}
+html[lang="ar"] th.woa-sortable::after{right:auto;left:10px}
+
 </style></head><body>
 <div id="strictLoadingOverlay" class="strict-loading-overlay"><div id="strictLoadingCard" class="strict-loading-card">
 <div class="strict-spinner"></div><h2 class="strict-loading-title">Loading WoA Intelligence</h2>
@@ -1775,4 +1786,115 @@ document.getElementById('pageUpBtn')?.addEventListener('click',()=>window.scroll
 document.getElementById('modalUpBtn')?.addEventListener('click',()=>document.querySelector('#modal .modal-body')?.scrollTo({top:0,behavior:'smooth'}));
 applyDashboardLanguage();
 initLive();
-</script></body></html>
+</script>
+
+<script>
+/* Global table sorting — operates only on rendered DOM rows; source data/calculations are untouched. */
+(function(){
+ const SORTABLE_SELECTOR='table thead th';
+ const numberWithSuffix=/^\s*[-+]?\s*[\d,.]+(?:\.\d+)?\s*[KMBT]?\s*%?\s*$/i;
+ const isoDate=/^\d{4}-\d{2}-\d{2}(?:[ T].*)?$/;
+
+ function cleanSortText(value){
+  return String(value??'').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim();
+ }
+ function parseScaledNumber(value){
+  const raw=cleanSortText(value).replace(/[%$€£¥₽]/g,'').replace(/\s/g,'');
+  const m=raw.match(/^([-+]?[\d,.]+(?:\.\d+)?)([KMBT])?$/i);
+  if(!m)return null;
+  let base=Number(m[1].replace(/,/g,''));
+  if(!Number.isFinite(base))return null;
+  const mult={K:1e3,M:1e6,B:1e9,T:1e12};
+  if(m[2])base*=mult[m[2].toUpperCase()]||1;
+  return base;
+ }
+ function valueForSort(cell){
+  const text=cleanSortText(cell?.innerText||cell?.textContent||'');
+  if(!text)return {type:'empty',value:''};
+  const g=text.match(/^G\s*([0-9]+)$/i);
+  if(g)return {type:'number',value:Number(g[1])};
+  if(isoDate.test(text)){
+   const stamp=Date.parse(text);
+   if(Number.isFinite(stamp))return {type:'date',value:stamp};
+  }
+  if(numberWithSuffix.test(text)){
+   const n=parseScaledNumber(text);
+   if(n!==null)return {type:'number',value:n};
+  }
+  return {type:'text',value:text};
+ }
+ function compareValues(a,b){
+  if(a.type==='empty'&&b.type==='empty')return 0;
+  if(a.type==='empty')return 1;
+  if(b.type==='empty')return -1;
+  if(a.type===b.type&&(a.type==='number'||a.type==='date'))return a.value-b.value;
+  if(a.type==='number'&&b.type==='number')return a.value-b.value;
+  return String(a.value).localeCompare(String(b.value),WOA_LANG||document.documentElement.lang||'en',{numeric:true,sensitivity:'base'});
+ }
+ function sortTableByHeader(th){
+  const table=th.closest('table');
+  const row=th.parentElement;
+  if(!table||!row)return;
+  const colIndex=Array.from(row.children).indexOf(th);
+  if(colIndex<0)return;
+  const tbody=table.tBodies&&table.tBodies[0];
+  if(!tbody)return;
+  const rows=Array.from(tbody.rows);
+  if(rows.length<2)return;
+  const nextDir=th.dataset.sortDir==='asc'?'desc':'asc';
+  Array.from(row.children).forEach(h=>{
+   if(h!==th){delete h.dataset.sortDir;h.setAttribute('aria-sort','none')}
+  });
+  th.dataset.sortDir=nextDir;
+  th.setAttribute('aria-sort',nextDir==='asc'?'ascending':'descending');
+  rows.forEach((tr,i)=>{if(!tr.dataset.woaOriginalIndex)tr.dataset.woaOriginalIndex=String(i)});
+  rows.sort((ra,rb)=>{
+   const av=valueForSort(ra.cells[colIndex]);
+   const bv=valueForSort(rb.cells[colIndex]);
+   const cmp=compareValues(av,bv);
+   if(cmp!==0)return nextDir==='asc'?cmp:-cmp;
+   return Number(ra.dataset.woaOriginalIndex||0)-Number(rb.dataset.woaOriginalIndex||0);
+  });
+  const frag=document.createDocumentFragment();
+  rows.forEach(tr=>frag.appendChild(tr));
+  tbody.appendChild(frag);
+ }
+ function prepareSortableTable(table){
+  if(!table||table.dataset.woaSortableReady==='1')return;
+  table.dataset.woaSortableReady='1';
+  table.querySelectorAll('thead th').forEach((th,index)=>{
+   th.classList.add('woa-sortable');
+   th.dataset.sortColumn=String(index);
+   th.setAttribute('role','columnheader');
+   th.setAttribute('tabindex','0');
+   th.setAttribute('aria-sort','none');
+   th.setAttribute('title',th.getAttribute('title')||'Click to sort');
+  });
+ }
+ function prepareAllSortableTables(root=document){
+  if(root?.matches?.('table'))prepareSortableTable(root);
+  root?.querySelectorAll?.('table').forEach(prepareSortableTable);
+ }
+ document.addEventListener('click',e=>{
+  const th=e.target.closest?.('th.woa-sortable');
+  if(th)sortTableByHeader(th);
+ });
+ document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('th.woa-sortable')){
+   e.preventDefault();sortTableByHeader(e.target);
+  }
+ });
+ const observer=new MutationObserver(mutations=>{
+  mutations.forEach(m=>m.addedNodes.forEach(node=>{
+   if(node.nodeType===1)prepareAllSortableTables(node);
+  }));
+ });
+ window.addEventListener('DOMContentLoaded',()=>{
+  prepareAllSortableTables(document);
+  observer.observe(document.body,{childList:true,subtree:true});
+ });
+ window.woaPrepareSortableTables=prepareAllSortableTables;
+ window.woaSortTableByHeader=sortTableByHeader;
+})();
+</script>
+</body></html>
