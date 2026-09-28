@@ -747,7 +747,7 @@ function outstandingEventEntries(eventId,enteredRows,members,dataset='',eventDat
 function kpiHtml(items){return items.map((x,i)=>`<div class="kpi ${['info','good','purple','warn','bad'][i%5]}"><div class="label">${esc(x[0])}</div><div class="value">${x[1]}</div><div class="note">${x[2]||''}</div></div>`).join('')} function card(title,sub,body,chip='',extraClass=''){return `<section class="glass ${extraClass||''}"><div class="panel-head"><div><h3>${title}</h3><p class="sub">${sub||''}</p></div>${chip?`<span class="chip">${chip}</span>`:''}</div><div class="panel-body">${body}</div></section>`} function tableCard(title,rows,headers,map,sub='Detailed performance records for the current view.'){const body=rows.length?`<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${map(r,i).map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="empty">No matching records are available.</div>`;return card(title,sub,body,`${rows.length} rows`)}
 function listCard(title,rows,chip,sub='Leadership focus for the current view.'){return card(title,sub,rows.length?`<ul class="list">${rows.map(r=>`<li><span>${pLink(r._name)}</span><span>${gBadge(r._g||memberG(r._name)||'')}</span><span>${fmt(r._score??r._change??r._growth??r._value??0)}</span></li>`).join('')}</ul>`:`<div class="empty">No matching records.</div>`,chip)}
 function groupCount(rows,prop){const o={};rows.forEach(r=>{const k=clean(r[prop])||'Unknown';o[k]=(o[k]||0)+1});return o} function groupSum(rows,prop,val){const o={};rows.forEach(r=>{const k=clean(r[prop])||'Unknown';o[k]=(o[k]||0)+num(r[val])});return o} function topObj(rows,labelProp,valProp,n=10){return Object.fromEntries(rows.map(r=>[r[labelProp],num(r[valProp])]).filter(x=>x[0]).sort((a,b)=>b[1]-a[1]).slice(0,n))} function allTimeGrowthRows(){const by={};(state.data.growthRaw||[]).forEach(r=>{const kk=key(r._name); if(!kk||!r._week)return; by[kk]=by[kk]||{_name:r._name,_g:memberG(r._name),_firstWeek:r._week,_lastWeek:r._week,_first:r._might,_last:r._might,_growth:0}; if(String(r._week).localeCompare(String(by[kk]._firstWeek))<0){by[kk]._firstWeek=r._week;by[kk]._first=r._might} if(String(r._week).localeCompare(String(by[kk]._lastWeek))>0){by[kk]._lastWeek=r._week;by[kk]._last=r._might}}); return Object.values(by).map(x=>({...x,_growth:x._last-x._first})).filter(x=>x._firstWeek!==x._lastWeek)} function eventTrend(rows){const o={};rows.forEach(r=>{const k=r._event;if(k)o[k]=(o[k]||0)+1});return o} function growthTrend(){const o={};(state.data.growthRaw||[]).forEach(r=>{o[r._week]=(o[r._week]||0)+r._might});return o}
-function chartBar(id,obj){const host=$(id);if(!host)return;const e=Object.entries(obj).filter(x=>x[1]!==undefined).slice(0,12);if(!e.length){host.innerHTML='<div class="empty">No data is available for this view.</div>';return}const max=Math.max(...e.map(x=>Math.abs(num(x[1]))),1);host.innerHTML=`<div class="barwrap">${e.map(([l,v])=>`<div class="baritem" data-title="${escAttr(l)}" data-value="${fmt(v)}"><div class="bar" style="height:${Math.max(4,Math.abs(num(v))/max*82)}%;${/^G[4-9]$/i.test(clean(l))?`background:${gColor(l)};box-shadow:0 0 18px color-mix(in srgb,${gColor(l)} 35%,transparent);`:''}"></div><div class="barlabel">${esc(l)}</div></div>`).join('')}</div>`;host.querySelectorAll('.baritem').forEach(el=>{el.onmousemove=e=>showTip(tipHtml(el.dataset.title,[['Value',el.dataset.value]]),e.clientX,e.clientY);el.onmouseleave=hideTip})} 
+function chartBar(id,obj){const host=$(id);if(!host)return;const e=Object.entries(obj).filter(x=>x[1]!==undefined).slice(0,12);if(!e.length){host.innerHTML='<div class="empty">No data is available for this view.</div>';return}const max=Math.max(...e.map(x=>Math.abs(num(x[1]))),1);host.innerHTML=`<div class="barwrap">${e.map(([l,v])=>`<div class="baritem" data-title="${escAttr(l)}" data-value="${fmt(v)}"><div class="bar" style="height:${Math.max(4,Math.abs(num(v))/max*82)}%;${/^G[4-9]$/i.test(clean(l))?`background:${gColor(l)};box-shadow:0 0 18px color-mix(in srgb,${gColor(l)} 35%,transparent);`:''}"></div><div class="barlabel">${esc(l)}</div></div>`).join('')}</div>`;host.querySelectorAll('.baritem').forEach(el=>{el.onmousemove=e=>showTip(tipHtml(el.dataset.title,[['Value',el.dataset.value]]),e.clientX,e.clientY);el.onmouseleave=hideTip;const m=memberByName(el.dataset.title);if(m){el.style.cursor='pointer';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.onclick=()=>openProfile(m._name);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openProfile(m._name)}}}})} 
 function chartBarPercent(id,obj,metricLabel='Target Achievement'){
  const host=$(id);
  if(!host)return;
@@ -771,6 +771,14 @@ function chartBarPercent(id,obj,metricLabel='Target Achievement'){
    e.clientY
   );
   el.onmouseleave=hideTip;
+  const m=memberByName(el.dataset.title);
+  if(m){
+   el.style.cursor='pointer';
+   el.setAttribute('role','button');
+   el.setAttribute('tabindex','0');
+   el.onclick=()=>openProfile(m._name);
+   el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openProfile(m._name)}};
+  }
  });
 }
 
@@ -1354,7 +1362,7 @@ function consolidatedPerformanceRows(){
 
  const result=new Map(roster.map(m=>[key(m._id||m._name),{
   _id:m._id,_name:m._name,_g:m._g,_status:m._status,
-  _success:0,_fail:0,_eligible:0,
+  _success:0,_fail:0,_eligible:0,_participatedEligible:0,
   _exemptRecords:0,_exemptParticipated:0,
   _observedSuccess:0,_observedRecords:0,
   _eventTypes:new Set(),_events:{}
@@ -1420,6 +1428,7 @@ function consolidatedPerformanceRows(){
     }
 
     rec._eligible++;
+    if(participated)rec._participatedEligible++;
     rec._eventTypes.add(cfg.key);
     rec._events[cfg.key].eligible++;
     if(accountabilitySuccess){
@@ -2118,7 +2127,26 @@ function openCalendarEvent(eventId,module){if(!module)return;state.module=module
 window.moveCalendar=moveCalendar;window.calendarToday=calendarToday;window.setCalendarView=setCalendarView;window.openCalendarEvent=openCalendarEvent;
 
 function renderAll(){renderShell();renderEventSelector();renderHero();const map={overview:renderOverview,calendar:renderCalendar,growth:renderGrowth,consolidated:renderConsolidatedPerformance,tinman:()=>renderEventModule('tinman','Tinman','Points'),darkOmens:()=>renderEventModule('darkOmens','Dark Omens','Essence'),trials:()=>renderEventModule('trials','Trials of Olympus','Points'),ragnarok:()=>renderEventModule('ragnarok','Ragnarök','Score'),chestpoints:()=>renderEventModule('chestpoints','Chest Points','Points'),vaults:renderVaults,exemptions:renderExemptions};(map[state.module]||renderOverview)();scheduleDynamicLayout(document);applyDashboardLanguage()}
-function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent=woaTranslateExact('Player not found.')} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show');const body=document.querySelector('#modal .modal-body');if(body)body.scrollTo({top:0,behavior:'auto'})} function renderProfile(){const m=memberByName(state.player)||{_name:state.player};$('modalTitle').textContent=m._name;$('profileGrid').innerHTML=kpiHtml([['G-Level',gBadge(m._g||memberG(m._name)||'-')],['Might',short(m._might)],['Vault Level',m._vault||'-'],['Status',m._status||'-'],['Growth',getPlayerGrowthTotal(m._name)===null?'—':short(getPlayerGrowthTotal(m._name))]]);const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];$('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');renderProfileContent();applyDashboardLanguage()} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
+function profileConsolidatedPerformance(name){
+ const oldPeriod=state.consolidatedPeriod,oldFrom=state.consolidatedFrom,oldTo=state.consolidatedTo,oldG=state.g;
+ try{
+  state.consolidatedPeriod='all';state.consolidatedFrom='';state.consolidatedTo='';state.g='';
+  return consolidatedPerformanceRows().find(r=>key(r._name)===key(name))||null;
+ }finally{
+  state.consolidatedPeriod=oldPeriod;state.consolidatedFrom=oldFrom;state.consolidatedTo=oldTo;state.g=oldG;
+ }
+}
+function profilePerformanceLabel(r){
+ if(!r)return 'Limited Data';
+ const c=consolidatedDisplayClass(r);
+ return c==='Consistent Performer'?'Consistent Performer':c==='Mixed Performance'?'Mixed Performer':c==='Consistent Underperformer'?'Non-Performer':'Limited Data';
+}
+function profilePerformanceBadge(r){
+ const label=profilePerformanceLabel(r);
+ const cls=label==='Consistent Performer'?'met':label==='Non-Performer'?'fail':label==='Mixed Performer'?'warnb':'expired';
+ return `<span class="badge ${cls}">${esc(woaTranslateExact(label))}</span>`;
+}
+function doSearch(){const q=$('search').value.trim(),m=memberByName(q);if(m)openProfile(m._name);else $('searchMsg').textContent=woaTranslateExact('Player not found.')} function openProfile(name){state.player=name;state.profileTab='summary';renderProfile();$('modal').classList.add('show');const body=document.querySelector('#modal .modal-body');if(body)body.scrollTo({top:0,behavior:'auto'})} function renderProfile(){const m=memberByName(state.player)||{_name:state.player},perf=profileConsolidatedPerformance(m._name),eligible=perf?num(perf._eligible):0,participated=perf?num(perf._participatedEligible):0,compliance=perf&&eligible?perf._success/eligible*100:0,participation=eligible?participated/eligible*100:0;$('modalTitle').textContent=m._name;$('profileGrid').innerHTML=kpiHtml([['G-Level',gBadge(m._g||memberG(m._name)||'-')],['Might',short(m._might)],['Vault Level',m._vault||'-'],['Status',m._status||'-'],['Growth',getPlayerGrowthTotal(m._name)===null?'—':short(getPlayerGrowthTotal(m._name))],['Performance',profilePerformanceBadge(perf),'All eligible consolidated events'],['Compliance %',eligible?compliance.toFixed(1)+'%':'—','Successful ÷ eligible records'],['Participation %',eligible?participation.toFixed(1)+'%':'—','Participated ÷ eligible records'],['Eligible Records',eligible,'Non-exempt consolidated records']]);const tabs=['summary','growth','tinman','darkOmens','trials','ragnarok','chestpoints','vaults','exemptions'];$('profileTabs').innerHTML=tabs.map(t=>`<button class="tab ${t===state.profileTab?'active':''}" data-profile-tab="${t}" onclick="setProfileTab('${t}')">${label(t)}</button>`).join('');renderProfileContent();applyDashboardLanguage()} function setProfileTab(t){state.profileTab=t;document.querySelectorAll('#profileTabs .tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===t));renderProfileContent()} function label(k){return {darkOmens:'Dark Omens',ragnarok:'Ragnarök',chestpoints:'Chest Points',vaults:'Vaults',exemptions:'Exemptions'}[k]||k[0].toUpperCase()+k.slice(1)} 
 function profileChart(title,id,sub='Recorded player performance history.'){return `<section class="glass"><div class="panel-head"><div><h3>${esc(title)}</h3><p class="sub">${esc(sub)}</p></div></div><div class="panel-body"><div class="chartbox" id="${id}"></div></div></section>`}
 function rowsForPlayer(dataset,name){const kk=key(name);return (state.data[dataset]||[]).filter(r=>key(r._name)===kk).sort((a,b)=>String(b._event||b._week).localeCompare(String(a._event||a._week)))}
 function seriesFromRows(rows,labelField,valueField){const o={};rows.forEach(r=>{const l=clean(r[labelField]); if(l)o[l]=num(r[valueField])});return o}
